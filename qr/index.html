@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>HCR — QR Codes Bewertungen</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: Arial, sans-serif;
+    background: #f5f5f5;
+    padding: 24px;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 22px;
+    margin-bottom: 6px;
+    color: #111;
+  }
+
+  .subtitle {
+    text-align: center;
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 28px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .card {
+    background: #fff;
+    border: 1.5px solid #ddd;
+    border-radius: 12px;
+    padding: 20px 16px 16px;
+    text-align: center;
+    break-inside: avoid;
+  }
+
+  .card img {
+    width: 100%;
+    max-width: 180px;
+    height: auto;
+    display: block;
+    margin: 0 auto 12px;
+  }
+
+  .linie-badge {
+    display: inline-block;
+    background: #1B6BB5;
+    color: #fff;
+    font-size: 20px;
+    font-weight: 800;
+    padding: 4px 16px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+
+  .scan-text {
+    font-size: 11px;
+    color: #888;
+    line-height: 1.4;
+  }
+
+  .btn-print {
+    display: block;
+    margin: 0 auto 28px;
+    padding: 12px 32px;
+    background: #1B6BB5;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .btn-print:hover { background: #155a9a; }
+
+  @media print {
+    body { background: #fff; padding: 8px; }
+    .btn-print { display: none; }
+    .grid { gap: 12px; }
+    .card { border: 1px solid #ccc; border-radius: 8px; padding: 12px 10px 10px; }
+  }
+</style>
+</head>
+<body>
+
+<h1>HCR — Bewertung scannen</h1>
+<p class="subtitle">Cranger Kirmes 2026 · Scan → Feedback abgeben</p>
+
+<button class="btn-print" onclick="window.print()">🖨️ Drucken / PDF</button>
+
+<div class="grid">
+  <div class="card">
+    <img src="303.png" alt="QR 303">
+    <div class="linie-badge">303</div>
+    <div class="scan-text">Wie war Ihr HCR-Erlebnis?</div>
+  </div>
+  <div class="card">
+    <img src="311.png" alt="QR 311">
+    <div class="linie-badge">311</div>
+    <div class="scan-text">Wie war Ihr HCR-Erlebnis?</div>
+  </div>
+  <div class="card">
+    <img src="311E.png" alt="QR 311E">
+    <div class="linie-badge">311E</div>
+    <div class="scan-text">Wie war Ihr HCR-Erlebnis?</div>
+  </div>
+  <div class="card">
+    <img src="312.png" alt="QR 312">
+    <div class="linie-badge">312</div>
+    <div class="scan-text">Wie war Ihr HCR-Erlebnis?</div>
+  </div>
+  <div class="card">
+    <img src="312E.png" alt="QR 312E">
+    <div class="linie-badge">312E</div>
+    <div class="scan-text">Wie war Ihr HCR-Erlebnis?</div>
+  </div>
+  <div class="card">
+    <img src="321.png" alt="QR 321">
+    <div class="linie-badge">321</div>
+    <div class="scan-text">Wie war Ihr HCR-Erlebnis?</div>
+  </div>
+  <div class="card">
+    <img src="321E.png" alt="QR 321E">
+    <div class="linie-badge">321E</div>
+    <div class="scan-text">Wie war Ihr HCR-Erlebnis?</div>
+  </div>
+  <div class="card">
+    <img src="322.png" alt="QR 322">
+    <div class="linie-badge">322</div>
+    <div class="scan-text">Wie war Ihr HCR-Erlebnis?</div>
+  </div>
+  <div class="card">
+    <img src="323.png" alt="QR 323">
+    <div class="linie-badge">323</div>
+    <div class="scan-text">Wie war Ihr HCR-Erlebnis?</div>
+  </div>
+  <div class="card">
+    <img src="323E.png" alt="QR 323E">
+    <div class="linie-badge">323E</div>
+    <div class="scan-text">Wie war Ihr HCR-Erlebnis?</div>
+  </div>
+  <div class="card">
+    <img src="324.png" alt="QR 324">
+    <div class="linie-badge">324</div>
+    <div class="scan-text">Wie war Ihr HCR-Erlebnis?</div>
+  </div>
+  <div class="card">
+    <img src="324E.png" alt="QR 324E">
+    <div class="linie-badge">324E</div>
+    <div class="scan-text">Wie war Ihr HCR-Erlebnis?</div>
+  </div>
+  <div class="card">
+    <img src="328.png" alt="QR 328">
+    <div class="linie-badge">328</div>
+    <div class="scan-text">Wie war Ihr HCR-Erlebnis?</div>
+  </div>
+  <div class="card">
+    <img src="329.png" alt="QR 329">
+    <div class="linie-badge">329</div>
+    <div class="scan-text">Wie war Ihr HCR-Erlebnis?</div>
+  </div>
+  <div class="card">
+    <img src="329E.png" alt="QR 329E">
+    <div class="linie-badge">329E</div>
+    <div class="scan-text">Wie war Ihr HCR-Erlebnis?</div>
+  </div>
+  <div class="card">
+    <img src="333.png" alt="QR 333">
+    <div class="linie-badge">333</div>
+    <div class="scan-text">Wie war Ihr HCR-Erlebnis?</div>
+  </div>
+  <div class="card">
+    <img src="337.png" alt="QR 337">
+    <div class="linie-badge">337</div>
+    <div class="scan-text">Wie war Ihr HCR-Erlebnis?</div>
+  </div>
+  <div class="card">
+    <img src="341.png" alt="QR 341">
+    <div class="linie-badge">341</div>
+    <div class="scan-text">Wie war Ihr HCR-Erlebnis?</div>
+  </div>
+  <div class="card">
+    <img src="347.png" alt="QR 347">
+    <div class="linie-badge">347</div>
+    <div class="scan-text">Wie war Ihr HCR-Erlebnis?</div>
+  </div>
+  <div class="card">
+    <img src="351.png" alt="QR 351">
+    <div class="linie-badge">351</div>
+    <div class="scan-text">Wie war Ihr HCR-Erlebnis?</div>
+  </div>
+  <div class="card">
+    <img src="351E.png" alt="QR 351E">
+    <div class="linie-badge">351E</div>
+    <div class="scan-text">Wie war Ihr HCR-Erlebnis?</div>
+  </div>
+  <div class="card">
+    <img src="361.png" alt="QR 361">
+    <div class="linie-badge">361</div>
+    <div class="scan-text">Wie war Ihr HCR-Erlebnis?</div>
+  </div>
+  <div class="card">
+    <img src="361E.png" alt="QR 361E">
+    <div class="linie-badge">361E</div>
+    <div class="scan-text">Wie war Ihr HCR-Erlebnis?</div>
+  </div>
+  <div class="card">
+    <img src="362.png" alt="QR 362">
+    <div class="linie-badge">362</div>
+    <div class="scan-text">Wie war Ihr HCR-Erlebnis?</div>
+  </div>
+  <div class="card">
+    <img src="362E.png" alt="QR 362E">
+    <div class="linie-badge">362E</div>
+    <div class="scan-text">Wie war Ihr HCR-Erlebnis?</div>
+  </div>
+  <div class="card">
+    <img src="367.png" alt="QR 367">
+    <div class="linie-badge">367</div>
+    <div class="scan-text">Wie war Ihr HCR-Erlebnis?</div>
+  </div>
+  <div class="card">
+    <img src="391.png" alt="QR 391">
+    <div class="linie-badge">391</div>
+    <div class="scan-text">Wie war Ihr HCR-Erlebnis?</div>
+  </div>
+  <div class="card">
+    <img src="391E.png" alt="QR 391E">
+    <div class="linie-badge">391E</div>
+    <div class="scan-text">Wie war Ihr HCR-Erlebnis?</div>
+  </div>
+  <div class="card">
+    <img src="NE31.png" alt="QR NE31">
+    <div class="linie-badge" style="background:#2E8B3A;">NE31</div>
+    <div class="scan-text">Wie war Ihr HCR-Erlebnis?</div>
+  </div>
+  <div class="card">
+    <img src="NE32.png" alt="QR NE32">
+    <div class="linie-badge" style="background:#2E8B3A;">NE32</div>
+    <div class="scan-text">Wie war Ihr HCR-Erlebnis?</div>
+  </div>
+  <div class="card">
+    <img src="NE33.png" alt="QR NE33">
+    <div class="linie-badge" style="background:#2E8B3A;">NE33</div>
+    <div class="scan-text">Wie war Ihr HCR-Erlebnis?</div>
+  </div>
+  <div class="card">
+    <img src="NE34.png" alt="QR NE34">
+    <div class="linie-badge" style="background:#2E8B3A;">NE34</div>
+    <div class="scan-text">Wie war Ihr HCR-Erlebnis?</div>
+  </div>
+</div>
+
+</body>
+</html>

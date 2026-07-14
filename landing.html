@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>HCR Fahrer — Die App für Ihren Fahrdienst</title>
+<meta name="description" content="HCR Fahrer — Die professionelle Dienstplaner-App für Herner Straßenbahn AG Fahrer. Dienstplan, Wetter, Pausentimer und mehr."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+/* ═══════════════════════════════════════════
+   TOKENS
+═══════════════════════════════════════════ */
+:root{
+  --cyan:#22D3EE;
+  --cyan2:#0EA5E9;
+  --cyan3:#06B6D4;
+  --navy:#04060D;
+  --navy2:#080C18;
+  --navy3:#0B0F1E;
+  --navy4:#0D1629;
+  --text:#E2E8F0;
+  --text2:#94A3B8;
+  --muted:#475569;
+  --border:rgba(34,211,238,0.12);
+  --border2:rgba(255,255,255,0.06);
+  --glass:rgba(8,12,24,0.65);
+  --glass2:rgba(34,211,238,0.04);
+  --nav-h:72px;
+  --glow-sm:0 0 20px rgba(34,211,238,0.25);
+  --glow-md:0 0 40px rgba(34,211,238,0.2),0 0 80px rgba(34,211,238,0.08);
+  --glow-lg:0 0 60px rgba(34,211,238,0.3),0 0 120px rgba(34,211,238,0.12);
+}
+
+/* ═══════════════════════════════════════════
+   RESET & BASE
+═══════════════════════════════════════════ */
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;font-size:16px;}
+body{
+  background:var(--navy);
+  color:var(--text);
+  font-family:'Outfit',system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  line-height:1.6;
+}
+a{text-decoration:none;color:inherit;}
+img{display:block;max-width:100%;}
+
+/* ═══════════════════════════════════════════
+   SCROLLBAR
+═══════════════════════════════════════════ */
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:var(--navy2);}
+::-webkit-scrollbar-thumb{background:rgba(34,211,238,0.3);border-radius:3px;}
+
+/* ═══════════════════════════════════════════
+   NOISE TEXTURE OVERLAY
+═══════════════════════════════════════════ */
+body::before{
+  content:'';
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  background-size:200px 200px;
+  opacity:0.4;
+}
+
+/* ═══════════════════════════════════════════
+   GRID PATTERN
+═══════════════════════════════════════════ */
+body::after{
+  content:'';
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(34,211,238,0.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(34,211,238,0.025) 1px,transparent 1px);
+  background-size:60px 60px;
+}
+
+/* ═══════════════════════════════════════════
+   NAVBAR
+═══════════════════════════════════════════ */
+.navbar{
+  position:fixed;top:0;left:0;right:0;
+  z-index:1000;
+  height:var(--nav-h);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 clamp(20px,5vw,60px);
+  transition:background 0.4s ease,border-color 0.4s ease,backdrop-filter 0.4s ease;
+  border-bottom:1px solid transparent;
+}
+.navbar.solid{
+  background:rgba(4,6,13,0.92);
+  border-bottom-color:var(--border);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+}
+.navbar::after{
+  content:'';
+  position:absolute;bottom:-1px;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(34,211,238,0.0),transparent);
+  transition:background 0.4s;
+}
+.navbar.solid::after{
+  background:linear-gradient(90deg,transparent,rgba(34,211,238,0.3),transparent);
+}
+.nav-brand{
+  display:flex;align-items:center;gap:12px;
+}
+.nav-logo{
+  width:40px;height:40px;border-radius:11px;
+  box-shadow:var(--glow-sm);
+}
+.nav-name{
+  font-size:18px;font-weight:800;letter-spacing:-0.3px;
+  color:var(--text);
+}
+.nav-name span{color:var(--cyan);}
+.nav-cta{
+  background:linear-gradient(135deg,var(--cyan),var(--cyan2));
+  border:none;border-radius:12px;
+  padding:10px 22px;
+  color:#000;font-size:13px;font-weight:800;
+  cursor:pointer;font-family:'Outfit',sans-serif;
+  letter-spacing:0.2px;
+  transition:opacity 0.2s,transform 0.15s,box-shadow 0.2s;
+  box-shadow:0 4px 20px rgba(34,211,238,0.3);
+  white-space:nowrap;
+}
+.nav-cta:hover{opacity:0.9;transform:translateY(-1px);box-shadow:0 6px 28px rgba(34,211,238,0.4);}
+.nav-cta:active{transform:translateY(0);}
+
+/* ═══════════════════════════════════════════
+   HERO
+═══════════════════════════════════════════ */
+.hero{
+  position:relative;
+  min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+}
+.hero-video{
+  position:absolute;inset:0;
+  width:100%;height:100%;
+  object-fit:cover;
+  opacity:0.38;
+  z-index:1;
+}
+.hero-overlay{
+  position:absolute;inset:0;z-index:2;
+  background:
+    linear-gradient(to bottom,
+      rgba(4,6,13,0.3) 0%,
+      rgba(4,6,13,0.05) 20%,
+      rgba(4,6,13,0.15) 50%,
+      rgba(4,6,13,0.7) 80%,
+      rgba(4,6,13,1) 100%),
+    radial-gradient(ellipse 80% 60% at 50% 30%,rgba(34,211,238,0.06) 0%,transparent 70%);
+}
+.hero-content{
+  position:relative;z-index:3;
+  text-align:center;
+  padding:calc(var(--nav-h) + 40px) clamp(20px,6vw,80px) 80px;
+  max-width:860px;
+  margin:0 auto;
+}
+@keyframes heroLogoIn{
+  from{opacity:0;transform:scale(0.65) translateY(24px);}
+  to{opacity:1;transform:scale(1) translateY(0);}
+}
+@keyframes heroTextIn{
+  from{opacity:0;transform:translateY(32px);}
+  to{opacity:1;transform:translateY(0);}
+}
+@keyframes logoGlow{
+  0%,100%{box-shadow:0 0 40px rgba(34,211,238,0.4),0 0 80px rgba(34,211,238,0.15),0 0 0 1px rgba(34,211,238,0.1);}
+  50%{box-shadow:0 0 60px rgba(34,211,238,0.6),0 0 120px rgba(34,211,238,0.25),0 0 0 1px rgba(34,211,238,0.2);}
+}
+.hero-logo{
+  width:clamp(80px,14vw,120px);
+  height:clamp(80px,14vw,120px);
+  border-radius:clamp(20px,4vw,30px);
+  margin:0 auto 28px;
+  animation:heroLogoIn 0.9s cubic-bezier(0.34,1.56,0.64,1) 0.2s both,
+             logoGlow 3.5s ease 1.2s infinite;
+}
+.hero-tag{
+  display:inline-flex;align-items:center;gap:7px;
+  background:rgba(34,211,238,0.08);
+  border:1px solid rgba(34,211,238,0.2);
+  border-radius:100px;
+  padding:5px 14px;
+  font-size:11px;font-weight:700;
+  color:var(--cyan);
+  letter-spacing:1.5px;text-transform:uppercase;
+  margin-bottom:22px;
+  animation:heroTextIn 0.6s ease 0.55s both;
+}
+.hero-tag::before{
+  content:'';
+  width:6px;height:6px;border-radius:50%;
+  background:var(--cyan);
+  box-shadow:0 0 8px var(--cyan);
+  animation:pulse 2s ease infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+.hero-h1{
+  font-size:clamp(44px,8vw,88px);
+  font-weight:900;
+  letter-spacing:-2px;
+  line-height:1;
+  margin-bottom:18px;
+  color:#fff;
+  animation:heroTextIn 0.7s ease 0.7s both;
+}
+.hero-h1 span{
+  color:var(--cyan);
+  text-shadow:0 0 40px rgba(34,211,238,0.5),0 0 80px rgba(34,211,238,0.2);
+}
+.hero-sub{
+  font-size:clamp(16px,2.5vw,20px);
+  font-weight:500;
+  color:rgba(226,232,240,0.8);
+  margin-bottom:12px;
+  animation:heroTextIn 0.7s ease 0.85s both;
+}
+.hero-tag2{
+  font-size:clamp(13px,2vw,15px);
+  font-weight:400;
+  color:var(--text2);
+  margin-bottom:40px;
+  animation:heroTextIn 0.7s ease 1s both;
+  max-width:520px;margin-left:auto;margin-right:auto;
+}
+.hero-btns{
+  display:flex;align-items:center;justify-content:center;
+  gap:14px;flex-wrap:wrap;
+  animation:heroTextIn 0.7s ease 1.15s both;
+  margin-bottom:40px;
+}
+.btn-hero{
+  display:inline-flex;align-items:center;gap:8px;
+  background:linear-gradient(135deg,var(--cyan),var(--cyan2));
+  border:none;border-radius:16px;
+  padding:16px 36px;
+  color:#000;font-size:16px;font-weight:800;
+  cursor:pointer;font-family:'Outfit',sans-serif;
+  letter-spacing:0.2px;
+  transition:opacity 0.2s,transform 0.15s,box-shadow 0.2s;
+  box-shadow:0 8px 32px rgba(34,211,238,0.4),0 0 60px rgba(34,211,238,0.1);
+}
+.btn-hero:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(34,211,238,0.5),0 0 80px rgba(34,211,238,0.15);}
+.btn-hero:active{transform:translateY(0);}
+.btn-ghost{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:16px;padding:15px 28px;
+  color:var(--text2);font-size:15px;font-weight:600;
+  cursor:pointer;font-family:'Outfit',sans-serif;
+  transition:all 0.2s;
+}
+.btn-ghost:hover{background:rgba(255,255,255,0.09);color:var(--text);border-color:rgba(255,255,255,0.2);}
+.hero-scroll{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  animation:heroTextIn 0.6s ease 1.4s both;
+}
+.hero-scroll span{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;}
+@keyframes scrollBounce{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(8px);}
+}
+.hero-chevron{
+  font-size:20px;color:var(--muted);
+  animation:scrollBounce 1.8s ease infinite;
+}
+
+/* ═══════════════════════════════════════════
+   SECTIONS GENERIC
+═══════════════════════════════════════════ */
+section{position:relative;z-index:1;padding:clamp(60px,8vw,120px) clamp(20px,6vw,80px);}
+.section-label{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:11px;font-weight:700;
+  color:var(--cyan);
+  letter-spacing:2px;text-transform:uppercase;
+  margin-bottom:16px;
+}
+.section-label::before{
+  content:'';
+  display:inline-block;
+  width:20px;height:2px;
+  background:var(--cyan);
+  border-radius:1px;
+}
+.section-title{
+  font-size:clamp(28px,4.5vw,48px);
+  font-weight:900;letter-spacing:-1px;line-height:1.1;
+  margin-bottom:16px;
+}
+.section-title span{color:var(--cyan);}
+.section-desc{
+  font-size:clamp(14px,1.8vw,17px);
+  color:var(--text2);
+  max-width:560px;
+  line-height:1.7;
+  margin-bottom:48px;
+}
+
+/* ═══════════════════════════════════════════
+   DIVIDER LINE
+═══════════════════════════════════════════ */
+.divider{
+  width:100%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(34,211,238,0.2),transparent);
+  position:relative;z-index:1;
+}
+
+/* ═══════════════════════════════════════════
+   FEATURES GRID
+═══════════════════════════════════════════ */
+.features-section{
+  background:
+    radial-gradient(ellipse 60% 40% at 80% 50%,rgba(34,211,238,0.04) 0%,transparent 70%),
+    radial-gradient(ellipse 40% 60% at 20% 50%,rgba(14,165,233,0.03) 0%,transparent 70%);
+}
+.features-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:20px;
+  max-width:1100px;margin:0 auto;
+}
+.feature-card{
+  background:var(--glass);
+  border:1px solid var(--border2);
+  border-radius:20px;
+  padding:28px 26px;
+  position:relative;overflow:hidden;
+  transition:transform 0.3s ease,border-color 0.3s ease,box-shadow 0.3s ease;
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+}
+.feature-card::before{
+  content:'';
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse 100% 80% at 0% 0%,rgba(34,211,238,0.05) 0%,transparent 60%);
+  opacity:0;transition:opacity 0.3s;
+}
+.feature-card:hover{
+  transform:translateY(-4px);
+  border-color:rgba(34,211,238,0.22);
+  box-shadow:0 16px 40px rgba(0,0,0,0.4),var(--glow-sm);
+}
+.feature-card:hover::before{opacity:1;}
+.feature-icon{
+  font-size:36px;
+  margin-bottom:18px;
+  display:block;
+  line-height:1;
+}
+.feature-name{
+  font-size:17px;font-weight:800;
+  letter-spacing:-0.3px;
+  margin-bottom:8px;
+  color:var(--text);
+}
+.feature-desc{
+  font-size:13.5px;
+  color:var(--text2);
+  line-height:1.65;
+}
+.feature-badge{
+  position:absolute;top:20px;right:20px;
+  background:rgba(34,211,238,0.1);
+  border:1px solid rgba(34,211,238,0.2);
+  border-radius:8px;padding:3px 9px;
+  font-size:10px;font-weight:700;
+  color:var(--cyan);letter-spacing:0.5px;
+}
+
+/* ═══════════════════════════════════════════
+   HIGHLIGHTS
+═══════════════════════════════════════════ */
+.highlights-section{
+  background:var(--navy2);
+}
+.highlights-section > .hl-inner{
+  max-width:1100px;margin:0 auto;
+}
+.highlight-block{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:clamp(30px,5vw,80px);
+  align-items:center;
+  margin-bottom:clamp(50px,8vw,100px);
+}
+.highlight-block:last-child{margin-bottom:0;}
+.highlight-block.reverse{direction:rtl;}
+.highlight-block.reverse > *{direction:ltr;}
+.hl-visual{
+  background:var(--glass);
+  border:1px solid var(--border);
+  border-radius:24px;
+  padding:clamp(24px,4vw,40px);
+  position:relative;overflow:hidden;
+  aspect-ratio:1 / 1.1;
+  display:flex;flex-direction:column;justify-content:center;
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+}
+.hl-visual::before{
+  content:'';
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(34,211,238,0.07) 0%,transparent 70%);
+}
+.hl-visual::after{
+  content:'';
+  position:absolute;
+  top:-1px;left:20%;right:20%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(34,211,238,0.4),transparent);
+}
+.mock-svc-num{
+  font-family:'DM Mono',monospace;
+  font-size:clamp(48px,8vw,80px);
+  font-weight:500;
+  color:var(--cyan);
+  letter-spacing:4px;
+  text-shadow:0 0 40px rgba(34,211,238,0.5),0 0 80px rgba(34,211,238,0.2);
+  text-align:center;
+  line-height:1;
+  margin-bottom:8px;
+  position:relative;z-index:1;
+}
+.mock-label{
+  font-size:10px;font-weight:700;
+  color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;
+  text-align:center;margin-bottom:20px;
+  position:relative;z-index:1;
+}
+.mock-progress-wrap{
+  height:6px;background:rgba(255,255,255,0.06);
+  border-radius:4px;overflow:hidden;margin-bottom:6px;
+  position:relative;z-index:1;
+}
+.mock-progress{
+  height:100%;border-radius:4px;
+  background:linear-gradient(90deg,var(--cyan2),var(--cyan),#10B981);
+  box-shadow:0 0 12px rgba(34,211,238,0.5);
+  width:62%;
+  animation:progressAnim 3s ease infinite alternate;
+}
+@keyframes progressAnim{from{width:62%;}to{width:68%;}}
+.mock-row{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
+  margin-top:16px;position:relative;z-index:1;
+}
+.mock-cell{
+  background:rgba(255,255,255,0.04);
+  border:1px solid var(--border2);
+  border-radius:12px;padding:10px 8px;text-align:center;
+}
+.mock-cell-label{font-size:8px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:5px;}
+.mock-cell-val{font-family:'DM Mono',monospace;font-size:18px;font-weight:500;}
+.c-green{color:#10B981;}
+.c-orange{color:#F97316;}
+.c-red{color:#F43F5E;}
+.mock-countdown{
+  position:relative;z-index:1;
+  text-align:center;
+  background:rgba(34,211,238,0.04);
+  border:1px solid rgba(34,211,238,0.15);
+  border-radius:14px;padding:14px;margin-top:14px;
+}
+.mock-countdown-val{
+  font-family:'DM Mono',monospace;
+  font-size:clamp(22px,4vw,32px);font-weight:500;
+  color:var(--cyan);letter-spacing:1px;
+}
+.mock-countdown-label{font-size:9px;color:var(--text2);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-top:3px;}
+.mock-pdf-list{
+  display:flex;flex-direction:column;gap:10px;
+  position:relative;z-index:1;
+}
+.mock-pdf-item{
+  display:flex;align-items:center;gap:12px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid var(--border2);
+  border-radius:13px;padding:12px 14px;
+}
+.mock-pdf-icon{font-size:22px;flex-shrink:0;}
+.mock-pdf-info{flex:1;min-width:0;}
+.mock-pdf-name{font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px;}
+.mock-pdf-meta{font-size:10px;color:var(--muted);}
+.mock-pdf-btn{
+  background:rgba(34,211,238,0.12);
+  border:1px solid rgba(34,211,238,0.25);
+  border-radius:8px;padding:5px 11px;
+  color:var(--cyan);font-size:11px;font-weight:700;
+  white-space:nowrap;
+}
+.mock-contact-list{
+  display:flex;flex-direction:column;gap:10px;
+  position:relative;z-index:1;
+}
+.mock-contact{
+  display:flex;align-items:center;gap:12px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid var(--border2);
+  border-radius:12px;padding:12px 14px;
+}
+.mock-contact-icon{
+  width:38px;height:38px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;
+}
+.c-cyan-bg{background:rgba(34,211,238,0.12);border:1px solid rgba(34,211,238,0.2);}
+.c-amber-bg{background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.2);}
+.c-green-bg{background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.2);}
+.mock-contact-info{flex:1;min-width:0;}
+.mock-contact-name{font-size:12px;font-weight:700;color:var(--text);margin-bottom:1px;}
+.mock-contact-num{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);}
+.mock-checklist{
+  display:flex;flex-direction:column;gap:8px;
+  margin-top:14px;position:relative;z-index:1;
+}
+.mock-check-item{
+  display:flex;align-items:center;gap:10px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid var(--border2);
+  border-radius:10px;padding:10px 12px;
+}
+.check-box{
+  width:18px;height:18px;border-radius:5px;
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  font-size:11px;
+}
+.checked{background:rgba(16,185,129,0.15);border:1.5px solid #10B981;color:#10B981;}
+.unchecked{background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.15);}
+.mock-check-label{font-size:12px;font-weight:600;color:var(--text);}
+.mock-check-label.done{color:var(--muted);text-decoration:line-through;}
+
+.hl-text{}
+.hl-num{
+  font-size:clamp(11px,1.5vw,13px);font-weight:700;
+  color:var(--cyan);letter-spacing:2px;text-transform:uppercase;
+  margin-bottom:12px;
+  display:flex;align-items:center;gap:8px;
+}
+.hl-num::before{
+  content:'';
+  display:inline-block;
+  width:24px;height:2px;background:var(--cyan);border-radius:1px;
+}
+.hl-title{
+  font-size:clamp(26px,3.5vw,38px);
+  font-weight:900;letter-spacing:-0.8px;line-height:1.1;
+  margin-bottom:18px;
+}
+.hl-title span{color:var(--cyan);}
+.hl-desc{
+  font-size:clamp(14px,1.6vw,16px);
+  color:var(--text2);
+  line-height:1.75;
+  margin-bottom:28px;
+}
+.hl-bullets{
+  display:flex;flex-direction:column;gap:10px;
+}
+.hl-bullet{
+  display:flex;align-items:center;gap:10px;
+  font-size:14px;color:var(--text2);
+}
+.hl-bullet::before{
+  content:'';
+  width:6px;height:6px;border-radius:50%;
+  background:var(--cyan);
+  box-shadow:0 0 8px rgba(34,211,238,0.5);
+  flex-shrink:0;
+}
+
+/* ═══════════════════════════════════════════
+   STATS
+═══════════════════════════════════════════ */
+.stats-section{
+  background:linear-gradient(135deg,rgba(34,211,238,0.05) 0%,transparent 50%,rgba(14,165,233,0.04) 100%);
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+}
+.stats-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:24px;
+  max-width:900px;margin:0 auto;
+  text-align:center;
+}
+.stat-item{}
+.stat-num{
+  font-family:'DM Mono',monospace;
+  font-size:clamp(36px,5vw,56px);
+  font-weight:500;
+  color:var(--cyan);
+  letter-spacing:-1px;
+  line-height:1;
+  text-shadow:0 0 30px rgba(34,211,238,0.35);
+  margin-bottom:8px;
+}
+.stat-label{
+  font-size:clamp(11px,1.5vw,13px);
+  font-weight:600;color:var(--text2);
+  text-transform:uppercase;letter-spacing:1px;
+}
+
+/* ═══════════════════════════════════════════
+   CTA SECTION
+═══════════════════════════════════════════ */
+.cta-section{
+  text-align:center;
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 50%,rgba(34,211,238,0.07) 0%,transparent 70%);
+}
+.cta-card{
+  background:var(--glass);
+  border:1px solid rgba(34,211,238,0.2);
+  border-radius:28px;
+  padding:clamp(40px,6vw,72px) clamp(30px,6vw,80px);
+  max-width:700px;margin:0 auto;
+  position:relative;overflow:hidden;
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+  box-shadow:0 0 80px rgba(34,211,238,0.1),0 32px 64px rgba(0,0,0,0.4);
+}
+.cta-card::before{
+  content:'';
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(34,211,238,0.08) 0%,transparent 65%);
+}
+.cta-card::after{
+  content:'';
+  position:absolute;
+  top:-1px;left:15%;right:15%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(34,211,238,0.5),transparent);
+}
+.cta-eyebrow{
+  font-size:11px;font-weight:700;
+  color:var(--cyan);letter-spacing:2px;text-transform:uppercase;
+  margin-bottom:16px;position:relative;z-index:1;
+}
+.cta-title{
+  font-size:clamp(28px,4vw,44px);
+  font-weight:900;letter-spacing:-1px;
+  margin-bottom:14px;position:relative;z-index:1;
+}
+.cta-title span{color:var(--cyan);}
+.cta-desc{
+  font-size:clamp(13px,1.8vw,16px);
+  color:var(--text2);line-height:1.7;
+  margin-bottom:36px;position:relative;z-index:1;
+  max-width:480px;margin-left:auto;margin-right:auto;
+}
+.cta-btn{
+  display:inline-flex;align-items:center;gap:10px;
+  background:linear-gradient(135deg,var(--cyan),var(--cyan2));
+  border:none;border-radius:18px;
+  padding:18px 48px;
+  color:#000;font-size:17px;font-weight:800;
+  cursor:pointer;font-family:'Outfit',sans-serif;
+  transition:all 0.2s;
+  box-shadow:0 8px 40px rgba(34,211,238,0.45),0 0 80px rgba(34,211,238,0.15);
+  position:relative;z-index:1;
+}
+.cta-btn:hover{transform:translateY(-3px);box-shadow:0 12px 50px rgba(34,211,238,0.55),0 0 100px rgba(34,211,238,0.2);}
+.cta-btn:active{transform:translateY(0);}
+.cta-note{
+  font-size:12px;color:var(--muted);margin-top:16px;
+  position:relative;z-index:1;
+}
+
+/* ═══════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════ */
+footer{
+  position:relative;z-index:1;
+  border-top:1px solid var(--border2);
+  padding:32px clamp(20px,6vw,80px);
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:16px;
+}
+.footer-brand{display:flex;align-items:center;gap:10px;}
+.footer-logo{width:32px;height:32px;border-radius:8px;box-shadow:var(--glow-sm);}
+.footer-name{font-size:14px;font-weight:700;color:var(--text);}
+.footer-name span{color:var(--cyan);}
+.footer-copy{font-size:12px;color:var(--muted);}
+.footer-right{text-align:right;}
+.footer-sub{font-size:12px;color:var(--muted);line-height:1.6;}
+
+/* ═══════════════════════════════════════════
+   SCROLL REVEAL
+═══════════════════════════════════════════ */
+.reveal{
+  opacity:0;
+  transform:translateY(32px);
+  transition:opacity 0.7s cubic-bezier(0.4,0,0.2,1),
+             transform 0.7s cubic-bezier(0.4,0,0.2,1);
+}
+.reveal.visible{opacity:1;transform:translateY(0);}
+.reveal-delay-1{transition-delay:0.1s;}
+.reveal-delay-2{transition-delay:0.2s;}
+.reveal-delay-3{transition-delay:0.3s;}
+.reveal-delay-4{transition-delay:0.4s;}
+.reveal-delay-5{transition-delay:0.5s;}
+.reveal-delay-6{transition-delay:0.6s;}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════ */
+@media(max-width:768px){
+  .highlight-block{grid-template-columns:1fr;}
+  .highlight-block.reverse{direction:ltr;}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+  .features-grid{grid-template-columns:1fr;}
+  footer{flex-direction:column;text-align:center;}
+  .footer-right{text-align:center;}
+}
+@media(max-width:480px){
+  .hero-btns{flex-direction:column;}
+  .btn-hero,.btn-ghost{width:100%;justify-content:center;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     NAVBAR
+══════════════════════════════════════ -->
+<nav class="navbar" id="navbar">
+  <a href="#" class="nav-brand">
+    <img src="icon-512x512-2.png" alt="HCR Logo" class="nav-logo"/>
+    <span class="nav-name">HCR <span>Fahrer</span></span>
+  </a>
+  <a href="https://187-124-172-79.sslip.io" target="_blank">
+    <button class="nav-cta">App öffnen →</button>
+  </a>
+</nav>
+
+<!-- ══════════════════════════════════════
+     HERO
+══════════════════════════════════════ -->
+<section class="hero" id="hero">
+  <video class="hero-video" autoplay muted playsinline loop preload="auto">
+    <source src="bg-landing.mp4" type="video/mp4"/>
+  </video>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-tag">Für HCR-Fahrer entwickelt</div>
+    <img src="icon-512x512-2.png" alt="HCR Fahrer Logo" class="hero-logo"/>
+    <h1 class="hero-h1">HCR <span>Fahrer</span></h1>
+    <p class="hero-sub">Die professionelle Dienstplaner-App für HCR-Fahrer</p>
+    <p class="hero-tag2">Alles, was Sie für Ihren Arbeitstag brauchen — auf einen Blick.<br/>Dienstplan, Wetter, Pausentimer, Fahrerkarten und vieles mehr.</p>
+    <div class="hero-btns">
+      <a href="https://187-124-172-79.sslip.io" target="_blank">
+        <button class="btn-hero">🚌 App öffnen →</button>
+      </a>
+      <a href="#features">
+        <button class="btn-ghost">Mehr erfahren ↓</button>
+      </a>
+    </div>
+    <div class="hero-scroll">
+      <span>Scrollen</span>
+      <div class="hero-chevron">⌄</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════
+     FEATURES
+══════════════════════════════════════ -->
+<section class="features-section" id="features">
+  <div style="max-width:1100px;margin:0 auto;">
+    <div class="reveal">
+      <div class="section-label">Funktionen</div>
+      <h2 class="section-title">Alles <span>auf einen Blick</span></h2>
+      <p class="section-desc">Von Ihrem heutigen Dienst bis hin zu Notfallkontakten — HCR Fahrer bringt alle wichtigen Tools in einer einzigen App zusammen.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card reveal reveal-delay-1">
+        <span class="feature-icon">🚌</span>
+        <div class="feature-badge">Live</div>
+        <div class="feature-name">Heutiger Dienst</div>
+        <p class="feature-desc">Ihre Dienstnummer, Startzeit, Pause und Ende — immer in Echtzeit mit Countdown-Timer bis zum nächsten Ereignis.</p>
+      </div>
+      <div class="feature-card reveal reveal-delay-2">
+        <span class="feature-icon">📅</span>
+        <div class="feature-name">Dienstplaner</div>
+        <p class="feature-desc">Vollständiger Wochenplan auf einen Blick. Tagesgenaue Übersicht mit allen Schichten — niemals mehr einen Dienst verpassen.</p>
+      </div>
+      <div class="feature-card reveal reveal-delay-3">
+        <span class="feature-icon">⏸</span>
+        <div class="feature-name">Pausentimer</div>
+        <p class="feature-desc">Starten Sie Ihre Pause mit einem einzigen Tippen. Der Timer läuft automatisch und erinnert Sie rechtzeitig ans Ende der Pause.</p>
+      </div>
+      <div class="feature-card reveal reveal-delay-4">
+        <span class="feature-icon">🌤</span>
+        <div class="feature-name">Wetter Herne</div>
+        <p class="feature-desc">Aktuelles Wetter in Herne — Temperatur, Wind, Luftfeuchtigkeit und Sichtweite direkt beim Öffnen der App geladen.</p>
+      </div>
+      <div class="feature-card reveal reveal-delay-5">
+        <span class="feature-icon">📝</span>
+        <div class="feature-name">Vorfallmeldung</div>
+        <p class="feature-desc">Vorfälle während des Fahrdienstes schnell, strukturiert und einfach dokumentieren und als Bericht speichern.</p>
+      </div>
+      <div class="feature-card reveal reveal-delay-6">
+        <span class="feature-icon">💶</span>
+        <div class="feature-name">Ausgabenverwaltung</div>
+        <p class="feature-desc">Behalten Sie Ihre monatlichen Ausgaben im Blick. Kategorisierung, Budgetübersicht und monatliche Statistiken auf einen Blick.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════
+     HIGHLIGHTS
+══════════════════════════════════════ -->
+<section class="highlights-section">
+  <div class="hl-inner">
+
+    <!-- Block 1 -->
+    <div class="highlight-block reveal">
+      <div class="hl-visual">
+        <div class="mock-label">DIENST NR.</div>
+        <div class="mock-svc-num">047</div>
+        <div class="mock-progress-wrap">
+          <div class="mock-progress"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px;position:relative;z-index:1;">
+          <span style="font-size:11px;color:var(--muted);font-weight:600;">05:45</span>
+          <span style="font-size:11px;color:var(--cyan);font-weight:700;">62% absolviert</span>
+          <span style="font-size:11px;color:var(--muted);font-weight:600;">13:20</span>
+        </div>
+        <div class="mock-row">
+          <div class="mock-cell">
+            <div class="mock-cell-label">Beginn</div>
+            <div class="mock-cell-val c-green">05:45</div>
+          </div>
+          <div class="mock-cell">
+            <div class="mock-cell-label">Pause</div>
+            <div class="mock-cell-val c-orange">09:30</div>
+          </div>
+          <div class="mock-cell">
+            <div class="mock-cell-label">Ende</div>
+            <div class="mock-cell-val c-red">13:20</div>
+          </div>
+        </div>
+        <div class="mock-countdown">
+          <div class="mock-countdown-val">01:14:32</div>
+          <div class="mock-countdown-label">⏱ Bis zur Pause</div>
+        </div>
+      </div>
+      <div class="hl-text">
+        <div class="hl-num">01</div>
+        <h3 class="hl-title">Immer den <span>Überblick</span></h3>
+        <p class="hl-desc">Die App zeigt Ihnen sofort Ihren heutigen Dienst — Dienstnummer, Fortschrittsbalken, Beginn, Pause und Ende. Ein Live-Countdown zählt bis zum nächsten Ereignis herunter, damit Sie immer genau wissen, wie viel Zeit noch bleibt.</p>
+        <div class="hl-bullets">
+          <div class="hl-bullet">Echtzeit-Fortschrittsbalken Ihres Dienstes</div>
+          <div class="hl-bullet">Großer Countdown bis zur Pause oder zum Ende</div>
+          <div class="hl-bullet">Automatisch aktualisiert — kein manuelles Eingeben</div>
+          <div class="hl-bullet">Kursbuchnummer und Abfahrtsinfos auf Abruf</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Block 2 -->
+    <div class="highlight-block reverse reveal">
+      <div class="hl-visual">
+        <div style="position:relative;z-index:1;font-size:10px;font-weight:700;color:var(--cyan);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:14px;">📄 Fahrerkarten</div>
+        <div class="mock-pdf-list">
+          <div class="mock-pdf-item">
+            <span class="mock-pdf-icon">📄</span>
+            <div class="mock-pdf-info">
+              <div class="mock-pdf-name">Mo – Fr (Schulzeit)</div>
+              <div class="mock-pdf-meta">Alle Linien · Regulärer Betrieb</div>
+            </div>
+            <div class="mock-pdf-btn">Öffnen</div>
+          </div>
+          <div class="mock-pdf-item">
+            <span class="mock-pdf-icon">📄</span>
+            <div class="mock-pdf-info">
+              <div class="mock-pdf-name">Mo – Fr (Ferien)</div>
+              <div class="mock-pdf-meta">Ferienfahrplan · Alle Linien</div>
+            </div>
+            <div class="mock-pdf-btn">Öffnen</div>
+          </div>
+          <div class="mock-pdf-item">
+            <span class="mock-pdf-icon">📄</span>
+            <div class="mock-pdf-info">
+              <div class="mock-pdf-name">Samstag</div>
+              <div class="mock-pdf-meta">Samstagsbetrieb · HCR</div>
+            </div>
+            <div class="mock-pdf-btn">Öffnen</div>
+          </div>
+          <div class="mock-pdf-item">
+            <span class="mock-pdf-icon">📄</span>
+            <div class="mock-pdf-info">
+              <div class="mock-pdf-name">Sonntag & Feiertag</div>
+              <div class="mock-pdf-meta">Sonn- und Feiertagsbetrieb</div>
+            </div>
+            <div class="mock-pdf-btn">Öffnen</div>
+          </div>
+        </div>
+      </div>
+      <div class="hl-text">
+        <div class="hl-num">02</div>
+        <h3 class="hl-title">Alle <span>Fahrerkarten</span> dabei</h3>
+        <p class="hl-desc">Alle vier HCR-Fahrerkarten sind direkt in der App integriert und mit einem Tippen abrufbar — Mo–Fr Schulzeit, Mo–Fr Ferien, Samstag sowie Sonntag und Feiertage. Keine Suche mehr, kein Ausdrucken nötig.</p>
+        <div class="hl-bullets">
+          <div class="hl-bullet">4 vollständige PDF-Fahrerkarten integriert</div>
+          <div class="hl-bullet">Immer die aktuellste Version</div>
+          <div class="hl-bullet">Direkt im Browser öffnen oder herunterladen</div>
+          <div class="hl-bullet">Schulzeit, Ferien, Samstag, Sonn- und Feiertage</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Block 3 -->
+    <div class="highlight-block reveal">
+      <div class="hl-visual">
+        <div style="position:relative;z-index:1;font-size:10px;font-weight:700;color:var(--cyan);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:12px;">📞 Notfallkontakte</div>
+        <div class="mock-contact-list">
+          <div class="mock-contact">
+            <div class="mock-contact-icon c-cyan-bg">🚌</div>
+            <div class="mock-contact-info">
+              <div class="mock-contact-name">HCR Leitstelle</div>
+              <div class="mock-contact-num">02323 / 162-0</div>
+            </div>
+          </div>
+          <div class="mock-contact">
+            <div class="mock-contact-icon c-amber-bg">🚗</div>
+            <div class="mock-contact-info">
+              <div class="mock-contact-name">ADAC Pannenhilfe</div>
+              <div class="mock-contact-num">0800 5 10 11 12</div>
+            </div>
+          </div>
+          <div class="mock-contact">
+            <div class="mock-contact-icon c-green-bg">🚑</div>
+            <div class="mock-contact-info">
+              <div class="mock-contact-name">Notarzt / Feuerwehr</div>
+              <div class="mock-contact-num">112</div>
+            </div>
+          </div>
+        </div>
+        <div class="mock-checklist">
+          <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:4px;position:relative;z-index:1;">🔋 Tages-Checkliste</div>
+          <div class="mock-check-item">
+            <div class="check-box checked">✓</div>
+            <div class="mock-check-label done">Fahrzeugkontrolle abgeschlossen</div>
+          </div>
+          <div class="mock-check-item">
+            <div class="check-box checked">✓</div>
+            <div class="mock-check-label done">Funk gecheckt</div>
+          </div>
+          <div class="mock-check-item">
+            <div class="check-box unchecked"></div>
+            <div class="mock-check-label">Abschlussmeldung Leitstelle</div>
+          </div>
+        </div>
+      </div>
+      <div class="hl-text">
+        <div class="hl-num">03</div>
+        <h3 class="hl-title">Notfallkontakte &amp; <span>Checkliste</span></h3>
+        <p class="hl-desc">HCR Leitstelle, ADAC Pannenhilfe und eigene Kontakte sind mit einem Tippen erreichbar. Die tägliche Checkliste sorgt dafür, dass Sie vor und nach dem Dienst nichts vergessen.</p>
+        <div class="hl-bullets">
+          <div class="hl-bullet">HCR Leitstelle direkt anrufbar</div>
+          <div class="hl-bullet">ADAC Pannenhilfe und Notrufnummern</div>
+          <div class="hl-bullet">Eigene Kontakte hinzufügen</div>
+          <div class="hl-bullet">Tägliche Checkliste für den Fahrdienst</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════
+     STATS
+══════════════════════════════════════ -->
+<section class="stats-section">
+  <div class="stats-grid reveal">
+    <div class="stat-item">
+      <div class="stat-num" data-target="10" data-suffix="+">0+</div>
+      <div class="stat-label">Funktionen</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" data-target="4" data-suffix="">0</div>
+      <div class="stat-label">Fahrerkarten-PDFs</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" data-target="100" data-suffix="%">0%</div>
+      <div class="stat-label">Offline-fähig</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" data-target="0" data-suffix="€" data-zero="true">0€</div>
+      <div class="stat-label">Kosten</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════
+     CTA
+══════════════════════════════════════ -->
+<section class="cta-section">
+  <div class="cta-card reveal">
+    <div class="cta-eyebrow">Jetzt starten</div>
+    <h2 class="cta-title">App <span>installieren</span></h2>
+    <p class="cta-desc">Als PWA direkt auf dem Startbildschirm installieren — keine App-Store-Registrierung nötig. Einfach öffnen, installieren, fertig.</p>
+    <a href="https://187-124-172-79.sslip.io" target="_blank">
+      <button class="cta-btn">🚌 App jetzt starten</button>
+    </a>
+    <p class="cta-note">Kompatibel mit Android &amp; iOS · Keine Installation über App Store erforderlich</p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     FOOTER
+══════════════════════════════════════ -->
+<footer>
+  <div class="footer-brand">
+    <img src="icon-512x512-2.png" alt="HCR Logo" class="footer-logo"/>
+    <div class="footer-name">HCR <span>Fahrer</span></div>
+  </div>
+  <div class="footer-copy">© 2026 — Alle Rechte vorbehalten</div>
+  <div class="footer-right">
+    <div class="footer-sub">Entwickelt für Herner Straßenbahn AG Fahrer<br/>Herne, Deutschland</div>
+  </div>
+</footer>
+
+<!-- ══════════════════════════════════════
+     SCRIPTS
+══════════════════════════════════════ -->
+<script>
+// Navbar solid on scroll
+(function(){
+  var nav = document.getElementById('navbar');
+  window.addEventListener('scroll', function(){
+    if(window.scrollY > 60){
+      nav.classList.add('solid');
+    } else {
+      nav.classList.remove('solid');
+    }
+  }, {passive:true});
+})();
+
+// Scroll reveal
+(function(){
+  var els = document.querySelectorAll('.reveal');
+  if(!els.length) return;
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        e.target.classList.add('visible');
+        io.unobserve(e.target);
+      }
+    });
+  },{threshold:0.12,rootMargin:'0px 0px -40px 0px'});
+  els.forEach(function(el){ io.observe(el); });
+})();
+
+// Animated counters
+(function(){
+  var counters = document.querySelectorAll('.stat-num[data-target]');
+  var started = false;
+  function animateCounters(){
+    counters.forEach(function(el){
+      var target = parseInt(el.dataset.target, 10);
+      var suffix = el.dataset.suffix || '';
+      var isZero = el.dataset.zero === 'true';
+      if(isZero){ el.textContent = '0' + suffix; return; }
+      var start = 0;
+      var duration = 1400;
+      var startTime = null;
+      function step(ts){
+        if(!startTime) startTime = ts;
+        var progress = Math.min((ts - startTime) / duration, 1);
+        var ease = 1 - Math.pow(1 - progress, 3);
+        var current = Math.round(start + (target - start) * ease);
+        el.textContent = current + suffix;
+        if(progress < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    });
+  }
+  var statsSection = document.querySelector('.stats-section');
+  if(!statsSection) return;
+  var io = new IntersectionObserver(function(entries){
+    if(entries[0].isIntersecting && !started){
+      started = true;
+      animateCounters();
+      io.disconnect();
+    }
+  },{threshold:0.3});
+  io.observe(statsSection);
+})();
+</script>
+</body>
+</html>

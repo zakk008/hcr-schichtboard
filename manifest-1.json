@@ -1,0 +1,65 @@
+{
+  "name": "HCR Fahrer",
+  "short_name": "HCR",
+  "description": "Dein HCR Schichtplaner mit Dienstdetails, Fahrerkarte, Wetter und mehr",
+  "start_url": "https://187-124-172-79.sslip.io/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0D1B2A",
+  "theme_color": "#00D4FF",
+  "scope": "https://187-124-172-79.sslip.io/",
+  "lang": "de",
+  "categories": [
+    "productivity",
+    "utilities"
+  ],
+  "icons": [
+    {
+      "src": "icon-192x192-1.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512x512-2.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-192x192-1.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon-512x512-2.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Dienstplan",
+      "url": "https://187-124-172-79.sslip.io/?tab=plan",
+      "icons": [
+        {
+          "src": "icon-192x192-1.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Monatsplaner",
+      "url": "https://187-124-172-79.sslip.io/?tab=monat",
+      "icons": [
+        {
+          "src": "icon-192x192-1.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
+}
