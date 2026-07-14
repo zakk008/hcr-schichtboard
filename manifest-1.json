@@ -2,12 +2,12 @@
   "name": "HCR Fahrer",
   "short_name": "HCR",
   "description": "Dein HCR Schichtplaner mit Dienstdetails, Fahrerkarte, Wetter und mehr",
-  "start_url": "https://187-124-172-79.sslip.io/",
+  "start_url": "https://zakk008.github.io/hcr-schichtboard/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#0D1B2A",
   "theme_color": "#00D4FF",
-  "scope": "https://187-124-172-79.sslip.io/",
+  "scope": "https://zakk008.github.io/hcr-schichtboard/",
   "lang": "de",
   "categories": [
     "productivity",
@@ -43,7 +43,7 @@
   "shortcuts": [
     {
       "name": "Dienstplan",
-      "url": "https://187-124-172-79.sslip.io/?tab=plan",
+      "url": "https://zakk008.github.io/hcr-schichtboard/?tab=plan",
       "icons": [
         {
           "src": "icon-192x192-1.png",
@@ -53,7 +53,7 @@
     },
     {
       "name": "Monatsplaner",
-      "url": "https://187-124-172-79.sslip.io/?tab=monat",
+      "url": "https://zakk008.github.io/hcr-schichtboard/?tab=monat",
       "icons": [
         {
           "src": "icon-192x192-1.png",
