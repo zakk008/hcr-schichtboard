@@ -1,7 +1,10 @@
-var CACHE_NAME = 'hcr-fahrer-v10';
+var CACHE_NAME = 'hcr-fahrer-astra-v11';
 var ASSETS = [
   './',
   './index.html',
+  './astra-design.css',
+  './astra-design.js',
+  './assets/depot-sunset.png',
   './manifest-1.json',
   './icon-192x192-1.png',
   './icon-512x512-2.png',
@@ -15,7 +18,7 @@ var ASSETS = [
 self.addEventListener('install', function(e) {
   e.waitUntil(
     caches.open(CACHE_NAME).then(function(cache) {
-      return cache.addAll(ASSETS.slice(0,4)); // Cache only core files on install
+      return cache.addAll(ASSETS.slice(0,7)); // Cache only core files on install
     })
   );
   self.skipWaiting();
@@ -25,7 +28,7 @@ self.addEventListener('activate', function(e) {
   e.waitUntil(
     caches.keys().then(function(keys) {
       return Promise.all(
-        keys.filter(function(k) { return k !== CACHE_NAME; })
+        keys.filter(function(k) { return k !== CACHE_NAME && k.indexOf('hcr-fahrer-') === 0; })
             .map(function(k) { return caches.delete(k); })
       );
     })

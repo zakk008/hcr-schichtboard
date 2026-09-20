@@ -1,0 +1,125 @@
+/* HCR Astra — charcoal, warm gold, clear service information. */
+:root{--bg:#060e11;--bg2:#0a1418;--card:#0b161b;--card2:#111e23;--accent:#ffcd45;--accent2:#dda91f;--accent3:#ffe08a;--amber:#ffcd45;--text:#f4f6f6;--text2:#a9b8bf;--muted:#8b9ba3;--border:rgba(194,208,209,.17);--border2:rgba(194,208,209,.12);--green:#29d68a;--nav-h:80px;--r:18px;--gradient-accent:linear-gradient(120deg,#ffcf4c,#edb525)}
+html,body{max-width:100%;background:#060e11;font-family:'Figtree',system-ui,sans-serif}
+body:before{background:radial-gradient(ellipse at 80% 0,rgba(209,156,47,.07),transparent 55%)}
+.screen{max-width:1100px;background:var(--bg)}
+.astra-legacy,[hidden]{display:none!important}
+button,a{-webkit-tap-highlight-color:transparent}button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:4px}
+.astra-scroll{padding:0!important;scrollbar-width:thin;scrollbar-color:#324044 transparent;min-height:0}
+.astra-hero{position:relative;min-height:292px;padding:24px 24px 60px;isolation:isolate;background:#071014;overflow:hidden}
+.astra-hero:before{content:'';position:absolute;inset:0;z-index:-2;background:url('assets/depot-sunset.png') 66% 49%/cover no-repeat}
+.astra-hero:after{content:'';position:absolute;inset:0;z-index:-1;background:linear-gradient(0deg,#060e11 0%,transparent 40%),linear-gradient(90deg,rgba(4,12,15,.85),rgba(4,12,15,.30) 48%,rgba(4,12,15,.02))}
+.astra-brand-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.astra-brand{display:flex;align-items:center;gap:11px;text-decoration:none;color:#f4f6f6}
+.astra-logo{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,#ffe785,#ffc333);color:#081010;font-size:35px;font-weight:900;box-shadow:inset 0 1px rgba(255,255,255,.5)}
+.astra-brand strong{display:flex;align-items:center;gap:12px;font-size:24px;letter-spacing:.1px;line-height:1.2}
+.astra-brand small{font-size:11px;color:#ffcd45;letter-spacing:2px;font-weight:700;white-space:nowrap}
+.astra-brand em{display:block;margin-top:4px;font-size:8px;font-style:normal;letter-spacing:1.4px;color:#b9c1c0}
+.astra-icon-button{width:40px;height:40px;border-radius:14px;display:grid;place-items:center;background:rgba(3,12,16,.8);border:1px solid #46504d;color:#ffda6b;cursor:pointer;flex:none}
+.astra-icon-button svg{width:23px;height:23px}
+.astra-date{color:#ecebe4;font-size:11px;text-align:right;margin-top:16px;min-height:16px}
+.astra-welcome{margin-top:17px;color:#fff;max-width:70%}
+.astra-welcome p{font-size:20px;font-weight:600;letter-spacing:-.5px}
+.astra-welcome h1{font-size:35px;font-weight:750;letter-spacing:-1.2px;line-height:1.13;margin:3px 0 9px}
+.astra-welcome>span{font-size:12px;color:#c1c5c4}
+.astra-motto{position:absolute;right:24px;bottom:59px;font-size:9px;letter-spacing:1.5px;text-align:right;line-height:1.55;color:#c1c5c4}
+.astra-motto b{font-weight:500;color:#ffcd45}
+.astra-content{position:relative;margin-top:-24px;padding:0 16px 24px}
+.astra-duty{padding:18px 17px 0;border:1px solid rgba(213,208,177,.35);border-radius:18px;background:linear-gradient(135deg,rgba(11,23,27,.98),rgba(5,14,17,.97));box-shadow:0 12px 34px #0003}
+.astra-duty-heading{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.astra-duty-heading h2{font-size:10px;letter-spacing:1.6px;font-weight:650;color:var(--accent);margin:0}
+.astra-status{font-size:9px;font-weight:700;letter-spacing:.6px;border-radius:30px;padding:7px 10px;white-space:nowrap;background:#132820;border:1px solid #24513d;color:#51e7a2}
+.astra-duty-main{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);align-items:center;gap:10px;margin:22px 0 18px}
+.astra-duty-info{min-width:0}
+#astra-code{font-size:clamp(38px,13vw,67px);line-height:1.06;letter-spacing:-2.5px;font-weight:800;overflow-wrap:anywhere}
+#astra-times{font-family:'Figtree',system-ui,sans-serif;font-size:21px;letter-spacing:-.5px;font-weight:600;color:#c2dce5;margin-top:10px;line-height:1.35}
+#astra-service-meta{font-size:11px;color:#a6c3ce;line-height:1.65;margin-top:7px}
+.astra-ring{position:relative;aspect-ratio:1;min-width:0}
+.astra-ring>svg{width:100%;height:100%;transform:rotate(-90deg);overflow:visible}
+.astra-ring circle{fill:none;stroke-width:5.5}
+.astra-ring-track{stroke:#23302f}
+#astra-ring-progress{stroke:#31d893;stroke-linecap:round;stroke-dasharray:0 100;transition:stroke-dasharray 1s linear}
+.astra-ring-copy{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center}
+.astra-ring-copy span{font-size:8px;color:#b3c0c3;line-height:1.2}
+.astra-ring-copy strong{font-family:'Figtree',sans-serif;font-size:clamp(19px,6.7vw,31px);font-variant-numeric:tabular-nums;font-weight:650;letter-spacing:-.8px;color:#ffcf4c}
+.astra-progress{height:7px;background:#25302f;border-radius:20px;overflow:hidden}
+#astra-progress-fill{display:block;height:100%;border-radius:20px;background:linear-gradient(90deg,#28a778,#35d582 80%,#ffd354);transition:width 1s linear}
+.astra-progress-labels{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-top:9px;font-size:10px;color:#e1e8e6;min-height:14px;font-variant-numeric:tabular-nums}
+#astra-percent{color:#b1bcbc}
+.astra-duty-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:18px;border-top:1px solid #ffffff0b;padding:14px 0}
+.astra-route{display:flex;align-items:center;gap:9px;min-width:0}
+.astra-route>svg{width:22px;height:22px;color:#ffcd45;flex-shrink:0}
+.astra-route span{display:block;color:#a4b0b4;font-size:10px;margin-bottom:5px}
+.astra-route strong{display:block;font-size:11px;line-height:1.4;font-weight:500;overflow-wrap:anywhere}
+.astra-detail-button{display:flex;align-items:center;gap:5px;min-height:44px;background:none;border:0;font-size:10px;white-space:nowrap;color:#ffda70;cursor:pointer;font-family:inherit}
+.astra-detail-button svg{width:14px;height:14px}
+.astra-secondary{display:grid;grid-template-columns:1.1fr 1fr;gap:10px;margin-top:10px}
+.astra-small-card{display:flex;align-items:flex-start;gap:10px;border:1px solid #334044;border-radius:16px;background:linear-gradient(135deg,#101d23,#071115);color:var(--text);padding:18px 13px;text-align:left;min-width:0;font-family:inherit}
+.astra-small-card>svg{width:25px;height:25px;color:#ffcd45;flex-shrink:0}
+.astra-small-card>div{min-width:0}
+.astra-small-card h2{font-size:11px;font-weight:550;margin:1px 0 10px;line-height:1.4}
+.astra-small-card strong{font-size:12px;font-weight:500;line-height:1.45;display:block;overflow-wrap:anywhere}
+.astra-small-card p{font-size:10px;color:#aeb9bd;line-height:1.6;margin-top:6px}
+.astra-next{position:relative;background:linear-gradient(135deg,#332c17,#0a1518 85%);border-color:#544b2b;cursor:pointer;padding-right:18px}
+.astra-next h2{font-size:9px;letter-spacing:.6px;color:#ffe088;margin-bottom:7px}
+.astra-next strong{font-size:23px;line-height:1.2;font-weight:650}
+.astra-next>svg:last-child{position:absolute;right:6px;top:50%;width:13px;height:16px}
+.astra-quote{position:relative;min-height:118px;margin-top:12px;padding:15px 25px 18px;border:1px solid #384347;border-radius:16px;overflow:hidden;background:linear-gradient(90deg,#081217 25%,#061015bb),url('assets/depot-sunset.png') center 75%/cover}
+.astra-quote>span{font-family:Georgia,serif;font-size:40px;color:#b69143;line-height:.7;position:absolute;top:18px;left:14px}
+.astra-quote p{font-size:15px;line-height:1.5;color:#b8ddea;margin:15px 0 12px;position:relative}
+.astra-quote-line{width:40px;height:2px;background:#ffcd45}
+.astra-quote small{position:absolute;right:18px;bottom:20px;text-align:center;color:#b9c2c4;font-size:9px;letter-spacing:1px;line-height:1.4}
+.astra-week{margin-top:15px;border:1px solid var(--border);border-radius:14px;background:var(--card)}
+.astra-week summary{cursor:pointer;padding:15px;font-size:12px;font-weight:600;color:var(--text);min-height:44px}
+.astra-week summary span{font-size:10px;font-weight:400;color:var(--text2);margin-left:10px}
+#astra-week-content{padding:0 12px 14px}
+.nav{height:calc(76px + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);background:rgba(5,14,17,.98);border-top:1px solid #35413b;box-shadow:none;backdrop-filter:blur(20px)}
+.nb{padding:10px 4px 8px;gap:4px;justify-content:center}
+.nb .ic{width:42px;height:32px;display:grid;place-items:center;border-radius:10px;color:#a4b0b8}
+.nb .ic svg{width:23px;height:23px}
+.nb.on .ic{background:#ffcd451c;color:#ffcd45;transform:none}
+.nb .lb{font-size:10px;letter-spacing:0;color:#aab4bb;font-weight:500}
+.nb.on .lb{color:#ffcd45;font-weight:700}
+.nb.on:before,.nb.on:after{display:none}
+.astra-duty[data-state="empty"] #astra-code,.astra-duty[data-state="free"] #astra-code{font-size:39px;letter-spacing:-1.5px}
+.astra-duty[data-state="empty"] #astra-times,.astra-duty[data-state="free"] #astra-times{font-size:16px}
+.astra-duty[data-state="empty"] .astra-status,.astra-duty[data-state="free"] .astra-status{color:#d5c4f5;border-color:#79639655;background:#43345444}
+.astra-duty[data-state="upcoming"] .astra-status{color:#ffda70;border-color:#76633b;background:#3e351b}
+.astra-duty[data-state="pause"] .astra-status{color:#ffc38a;border-color:#7b562c;background:#402b16}
+#s-plan .hdr,#s-det .hdr{background:#0a1418;border-bottom-color:var(--border)}
+#s-plan .day-row,#s-det .card{border-radius:14px}
+body.light{--bg:#f2f3ec;--card:#fff;--text:#122329;--text2:#465b65;--muted:#526970;--border:#c9d1ca;--border2:#c9d1ca;--accent:#977000}
+body.light .astra-duty{background:#fff;border-color:#bdc5bb;color:var(--text)}
+body.light .astra-small-card{background:#fff;border-color:#c8d0ca;color:var(--text)}
+body.light .astra-next{background:linear-gradient(135deg,#fff3ce,#fff)}
+body.light #astra-times,body.light #astra-service-meta,body.light .astra-route span,body.light .astra-small-card p,body.light #astra-percent,body.light .astra-progress-labels{color:#465b65}
+body.light .astra-next h2,body.light .astra-small-card>svg,body.light .astra-route>svg,body.light .astra-detail-button{color:#947000}
+body.light .astra-ring-copy span{color:#4b5c61}body.light .astra-ring-copy strong{color:#937000}body.light .astra-ring-track{stroke:#e3e9e4}
+body.light .astra-duty-footer{border-color:#dfe4df}body.light .nav{background:#f2f3ec!important}body.light .nb .lb,body.light .nb .ic{color:#4a626d}body.light .nb.on .lb,body.light .nb.on .ic{color:#916a00}
+@media(min-width:700px){
+ .screen{border-left:1px solid #26302e;border-right:1px solid #26302e}
+ .astra-hero{min-height:345px;padding:30px 48px 65px}.astra-hero:before{background-position:center 48%}.astra-brand strong{font-size:28px}.astra-logo{width:50px;height:50px;font-size:39px}.astra-brand small{font-size:12px}.astra-brand em{font-size:9px}.astra-date{font-size:13px}.astra-welcome{margin-top:22px}.astra-welcome p{font-size:26px}.astra-welcome h1{font-size:54px}.astra-welcome>span{font-size:15px}.astra-motto{right:48px;bottom:68px;font-size:12px}
+ .astra-content{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:18px;padding:0 32px 32px;margin-top:-26px;align-items:start}.astra-duty{grid-row:span 2;padding:25px 25px 0}.astra-duty-heading h2{font-size:12px}.astra-status{font-size:10px}.astra-duty-main{margin:28px 0 26px;gap:20px}#astra-code{font-size:74px}#astra-times{font-size:25px}#astra-service-meta{font-size:12px}.astra-ring-copy strong{font-size:31px}.astra-ring-copy span{font-size:9px}.astra-progress-labels{font-size:12px}.astra-duty-footer{padding:18px 0}.astra-route strong{font-size:12px}.astra-detail-button{font-size:11px}.astra-secondary{grid-template-columns:1fr;margin:0;gap:12px}.astra-small-card{padding:20px;min-height:112px;align-items:center;gap:18px}.astra-small-card h2{font-size:13px;margin-bottom:6px}.astra-small-card strong{font-size:15px}.astra-small-card p{font-size:12px}.astra-next strong{font-size:28px}.astra-small-card>svg{width:30px;height:30px}.astra-next>svg:last-child{right:20px;width:18px}.astra-quote{margin:0;min-height:130px}.astra-quote p{font-size:17px}.astra-week{grid-column:1/-1;margin:0}.nav{max-width:1100px;width:100%;align-self:center}.nb .lb{font-size:11px}.nb .ic{width:52px}
+}
+@media(max-width:360px){.astra-hero{padding-left:18px;padding-right:18px}.astra-brand strong{font-size:21px;gap:8px}.astra-brand small{font-size:9px}.astra-content{padding:0 10px 20px}.astra-duty{padding:15px 13px 0}.astra-duty-heading h2{font-size:9px;letter-spacing:1px}.astra-status{font-size:8px;padding:6px 8px}.astra-small-card{gap:7px;padding:14px 9px}.astra-small-card>svg{width:20px;height:20px}.astra-small-card h2{font-size:10px}.astra-next h2{font-size:8px}.astra-ring-copy span{font-size:7px}#astra-times{font-size:18px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+#dash-wetter{margin:14px 0 0!important;grid-column:1/-1}
+.astra-duty[data-state="empty"] #astra-ring-progress,.astra-duty[data-state="free"] #astra-ring-progress{stroke:transparent}
+#s-plan .scroll,#s-det .scroll{padding:18px 16px 0}
+#s-plan .hdr,#s-det .hdr{padding:20px 18px}
+#s-plan .day-row{border:1px solid #26383e;background:linear-gradient(120deg,#101f25,#0a171d);border-radius:12px;min-height:74px;padding:12px;gap:12px;box-shadow:none}
+#s-plan .day-row.today{background:linear-gradient(100deg,#403817,#1f251a);border:1px solid #ffcd45}
+#s-plan .day-row[role="button"]:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+#s-plan .day-row>div:first-child>div:first-child{color:var(--text)!important;font-size:16px!important;font-weight:600!important}
+#s-plan .day-row.today>div:first-child>div:first-child{color:var(--accent)!important}
+#s-plan #wk-title{font-size:12px!important;text-transform:none!important;letter-spacing:0!important;margin:4px 0 18px!important}
+.astra-plan-footer{height:145px;background:linear-gradient(0deg,#081116aa,#08111655),url('assets/depot-sunset.png') center 53%/cover;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:16px;margin:18px 0;color:#fff;text-shadow:0 2px 10px #000}
+.astra-plan-footer strong{font-size:32px;letter-spacing:1px}.astra-plan-footer span{font-size:12px;margin-top:5px}
+#det-body .card-hi{background:linear-gradient(130deg,#102027,#071216);border:1px solid #3b473c;box-shadow:none}
+#det-body .tl-box{border-radius:12px;background:#0b1b22;border:1px solid #263b40}
+#det-body .tl-time{color:var(--text2)}
+#s-det .hdr #det-title{font-size:29px!important}
+#s-det button,#s-plan .hdr button{min-height:40px}
+body.light #s-plan .day-row,body.light #det-body .card-hi,body.light #det-body .tl-box{background:#fff;border-color:#c8d0ca}
+body.light #s-plan .day-row.today{background:#fff2cb;border-color:#a17a10}
+@media(min-width:700px){#s-plan .scroll,#s-det .scroll{padding:24px max(24px,calc((100% - 720px)/2)) 0}.astra-plan-footer{height:190px}}
