@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
 <meta name="mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
@@ -599,6 +599,7 @@ textarea{resize:none;}
 .btn-sm{box-shadow:inset 0 1px 0 rgba(255,255,255,0.05),0 1px 3px rgba(0,0,0,0.3);}
 .btn-p{box-shadow:0 4px 16px rgba(245,166,35,0.28),inset 0 1px 0 rgba(255,255,255,0.25) !important;}
 </style>
+<link rel="stylesheet" href="astra-design.css">
 </head>
 <body>
 
@@ -714,7 +715,7 @@ textarea{resize:none;}
 
     <div id="ov-days-list"></div>
 
-    <!-- Total semaine -->
+    <!-- Geplante Arbeitszeit -->
     <div style="background:var(--card);border:1px solid var(--border2);border-radius:var(--r-sm);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;margin-top:2px;">
       <div>
         <div style="font-size:11px;color:var(--text2);margin-bottom:3px;">Wochenarbeitszeit</div>
@@ -6558,7 +6559,7 @@ function go(id){
   document.querySelectorAll(".screen").forEach(function(s){s.classList.remove("on");});
   document.getElementById("s-"+id).classList.add("on");
   if(id==="plan")renderPlan();
-  else if(id==="det")renderDet(curDet);
+  else if(id==="det")switchTab("info");
   else if(id==="alr"){renderAlrs();renderHCRCards();}
   else if(id==="edit")loadEdit();
   else if(id==="dash"){refreshDash();renderOverview();}
@@ -6641,7 +6642,7 @@ function refreshDash(){
     var durMinCalc=t2m(fin)-t2m(deb);
     if(durMinCalc<0)durMinCalc+=24*60;
     var pauseMinCalc=0;
-    var rp=s&&(s.parts||[]);
+    var rp=s?(s.parts||[]):[];
     rp.forEach(function(p){if(p.t==="pau")pauseMinCalc+=(p.min||0);});
     durMinCalc-=pauseMinCalc;
     dur=pad(Math.floor(durMinCalc/60))+":"+pad(durMinCalc%60);
@@ -6975,8 +6976,8 @@ function renderPlan(){
   var th=Math.floor(totalMin/60),tm=totalMin%60;
   if(days.length>0){
     html+='<div style="background:linear-gradient(135deg,rgba(251,191,36,0.06) 0%,rgba(245,158,11,0.04) 100%);border:1px solid rgba(251,191,36,0.18);border-radius:var(--r-sm);padding:13px 16px;display:flex;justify-content:space-between;align-items:center;margin-top:6px;">'
-      +'<div><div style="font-size:9px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:3px;">Total semaine</div>'
-      +'<div style="font-size:11px;color:var(--text2);font-weight:500;">'+(days.filter(function(d){return d.s&&d.s!=="F"&&d.s!=="Urlaub"&&d.s!=="KRANK"&&d.s!=="AZK";}).length)+' jours de service</div></div>'
+      +'<div><div style="font-size:9px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:3px;">Geplante Arbeitszeit</div>'
+      +'<div style="font-size:11px;color:var(--text2);font-weight:500;">'+(days.filter(function(d){return d.s&&d.s!=="F"&&d.s!=="Urlaub"&&d.s!=="KRANK"&&d.s!=="AZK";}).length)+' Dienste</div></div>'
       +'<div class="clock" style="font-size:22px;font-weight:900;color:var(--amber);letter-spacing:1px;">'+th+'h <span style="font-size:14px;opacity:0.7;">'+pad(tm)+'</span></div>'
       +'</div>';
   }
@@ -8330,8 +8331,10 @@ function addWetterToDash(){
   card.style.cssText="margin-bottom:12px;cursor:pointer;";
   card.onclick=function(){go("mehr");};
   card.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;"><div style="display:flex;align-items:center;gap:10px;"><span id="dash-w-icon" style="font-size:28px;">🌡</span><div><div id="dash-w-temp" style="font-size:20px;font-weight:900;color:var(--text);">--°C</div><div id="dash-w-desc" style="font-size:11px;color:var(--muted);">Herne · Wird geladen</div></div></div><div style="text-align:right;"><div style="font-size:10px;color:var(--muted);">Wind</div><div id="dash-w-wind" style="font-size:13px;font-weight:700;color:var(--cyan);">--</div></div></div>';
+  var astraContent=dashScroll.querySelector(".astra-content");
   var firstCard=dashScroll.querySelector(".card-hi");
-  if(firstCard)dashScroll.insertBefore(card,firstCard);
+  if(astraContent)astraContent.appendChild(card);
+  else if(firstCard)dashScroll.insertBefore(card,firstCard);
   else dashScroll.prepend(card);
   // Mini widget - loads when user opens Wetter tab
   var dd=document.getElementById("dash-w-desc");
@@ -10222,5 +10225,6 @@ function jpInit(){
   </div>
 </div>
 
+<script src="astra-design.js"></script>
 </body>
 </html>
