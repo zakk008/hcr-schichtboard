@@ -536,6 +536,25 @@ textarea{resize:none;}
   background:linear-gradient(145deg,#111827,#0D1426) !important;
   border-color:rgba(245,166,35,0.1) !important;
 }
+#dash-break-card{
+  display:flex;align-items:center;gap:16px;
+  background:linear-gradient(145deg,#111827,#0D1426);
+  border:1px solid rgba(245,166,35,0.16);border-radius:var(--r);
+  padding:16px 18px;margin-bottom:12px;box-shadow:var(--shadow);
+}
+.dash-break-ring{width:66px;height:66px;flex:none;transform:rotate(-90deg);overflow:visible;}
+.dash-break-ring circle{fill:none;stroke-width:5;}
+.dash-break-ring .track{stroke:rgba(255,255,255,0.09);}
+.dash-break-ring .progress{stroke:var(--accent);stroke-linecap:round;stroke-dasharray:194.78;stroke-dashoffset:194.78;transition:stroke-dashoffset 1s linear,stroke .2s;}
+#dash-break-card.in-pause .dash-break-ring .progress{stroke:var(--green);}
+.dash-break-content{min-width:0;flex:1;}
+#dash-break-title{font-size:10px;font-weight:800;color:var(--accent);letter-spacing:1.2px;margin-bottom:5px;}
+#dash-break-card.in-pause #dash-break-title{color:var(--green);}
+#dash-break-count{font-size:24px;font-weight:900;color:var(--text);line-height:1.1;font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums;white-space:nowrap;}
+#dash-break-detail{font-size:12px;font-weight:600;color:var(--text2);margin-top:6px;line-height:1.35;}
+#dash-break-duration{font-size:11px;color:var(--text2);margin-top:3px;}
+@media(max-width:350px){#dash-break-card{gap:11px;padding:14px}.dash-break-ring{width:56px;height:56px}#dash-break-count{font-size:21px}}
+@media(prefers-reduced-motion:reduce){.dash-break-ring .progress{transition:none;}}
 #td-cd{
   color:var(--accent) !important;
   -webkit-text-fill-color:var(--accent) !important;
@@ -705,6 +724,19 @@ textarea{resize:none;}
       <div id="td-cd" class="clock" style="font-size:40px;font-weight:900;color:var(--accent);letter-spacing:1px;line-height:1;margin-bottom:6px;"></div>
       <div id="td-cdesc" style="font-size:13px;font-weight:600;color:var(--text);line-height:1.5;"></div>
     </div>
+
+    <section id="dash-break-card" aria-labelledby="dash-break-title">
+      <svg class="dash-break-ring" viewBox="0 0 72 72" aria-hidden="true">
+        <circle class="track" cx="36" cy="36" r="31"></circle>
+        <circle id="dash-break-progress" class="progress" cx="36" cy="36" r="31"></circle>
+      </svg>
+      <div class="dash-break-content">
+        <div id="dash-break-title">NÄCHSTE PAUSE</div>
+        <div id="dash-break-count">—</div>
+        <div id="dash-break-detail">Keine Pausendaten</div>
+        <div id="dash-break-duration"></div>
+      </div>
+    </section>
 
     <!-- ══ SEMAINE ══ -->
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
@@ -6576,6 +6608,7 @@ function tick(){
   document.getElementById("d-hm").textContent=pad(n.getHours())+":"+pad(n.getMinutes());
   document.getElementById("d-s").textContent=":"+pad(n.getSeconds());
   updateTimer();
+  updateBreakCard(n);
   // Only check alerts once per minute (not every second)
   var nm=new Date();
   if(nm.getSeconds()===0)checkSmartAlerts();
@@ -6586,6 +6619,65 @@ function setEl(id,v){var e=document.getElementById(id);if(e)e.textContent=v;}
 function setHtml(id,v){var e=document.getElementById(id);if(e)e.innerHTML=v;}
 function setStyle(id,prop,v){var e=document.getElementById(id);if(e)e.style[prop]=v;}
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+
+// Only explicit Dienst/Fahrerkarte parts are reliable pause data.
+function updateBreakCard(now){
+  var card=document.getElementById("dash-break-card");
+  if(!card)return;
+  now=now||new Date();
+  var today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  var yesterday=new Date(today);yesterday.setDate(today.getDate()-1);
+  var dates=[yesterday,today],all=getPlanAll(),breaks=[],hasParts=false;
+  for(var d=0;d<dates.length;d++){
+    var key=pad(dates[d].getDate())+"."+pad(dates[d].getMonth()+1),entry=null;
+    for(var i=0;i<all.length;i++){if(all[i].d===key){entry=all[i];break;}}
+    var svc=entry&&getSvc(entry.s);
+    var parts=svc&&Array.isArray(svc.parts)?svc.parts:null;
+    if(!parts)continue;
+    hasParts=true;
+    var dayStart=dates[d].getTime(),serviceStart=t2m(svc.deb||entry.h0);
+    for(var j=0;j<parts.length;j++){
+      var p=parts[j];
+      if(p.t!=="pau")continue;
+      var startMinute=t2m(p.h0),endMinute=t2m(p.h1);
+      if(startMinute<0||endMinute<0)continue;
+      if(serviceStart>=0&&startMinute<serviceStart)startMinute+=1440;
+      while(endMinute<=startMinute)endMinute+=1440;
+      breaks.push({part:p,start:dayStart+startMinute*60000,end:dayStart+endMinute*60000,duration:endMinute-startMinute,anchor:dayStart+serviceStart*60000});
+    }
+  }
+  breaks.sort(function(a,b){return a.start-b.start;});
+  var next=null;
+  for(var k=0;k<breaks.length;k++){if(now.getTime()<breaks[k].end){next=breaks[k];break;}}
+  var ring=document.getElementById("dash-break-progress");
+  var phase=next?(now.getTime()<next.start?"before":"during"):"empty";
+  if(card.dataset.phase!==phase){ring.style.transition="none";card.dataset.phase=phase;}
+  else ring.style.transition="";
+  card.classList.toggle("in-pause",phase==="during");
+  if(!next){
+    setEl("dash-break-title","NÄCHSTE PAUSE");
+    setEl("dash-break-count",hasParts?"Keine weitere Pause":"Keine Pausendaten");
+    setEl("dash-break-detail","");setEl("dash-break-duration","");
+    ring.style.strokeDashoffset="194.78";
+    return;
+  }
+  var remaining=Math.max(0,Math.ceil(((phase==="before"?next.start:next.end)-now.getTime())/1000));
+  var fraction;
+  if(phase==="before"){
+    var anchor=next.anchor<=next.start?next.anchor:now.getTime();
+    fraction=Math.max(0,Math.min(1,(now.getTime()-anchor)/Math.max(1,next.start-anchor)));
+    setEl("dash-break-title","NÄCHSTE PAUSE");
+    setEl("dash-break-count","NOCH "+pad(Math.floor(remaining/3600))+":"+pad(Math.floor(remaining%3600/60))+":"+pad(remaining%60));
+    setEl("dash-break-detail",next.part.h0+" → "+next.part.h1);
+  }else{
+    fraction=Math.max(0,Math.min(1,(next.end-now.getTime())/(next.end-next.start)));
+    setEl("dash-break-title","PAUSE");
+    setEl("dash-break-count",pad(Math.floor(remaining/60))+":"+pad(remaining%60));
+    setEl("dash-break-detail","Pause endet um "+next.part.h1+" Uhr");
+  }
+  setEl("dash-break-duration","Dauer: "+next.duration+" Min");
+  ring.style.strokeDashoffset=String(194.78*(1-fraction));
+}
 
 function refreshDash(){
   var td=todayStr(), entry=null;
@@ -7029,6 +7121,25 @@ function switchTab(tab){
 function srchDet(){var v=normalize(document.getElementById("det-inp").value);if(v){curDet=v;if(curTab==="fk"){var autoP=autoDetectFKPlan(v);setFKPlan(autoP);renderFahrer(v);}else{renderDet(v);}}}
 function navDet(key){curDet=key;if(curTab==="fk"){var autoP=autoDetectFKPlan(key);setFKPlan(autoP);renderFahrer(key);}else{renderDet(key);}}
 
+function firstPauseSummary(parts){
+  if(!Array.isArray(parts))return null;
+  for(var i=0;i<parts.length;i++){
+    var p=parts[i];
+    if(p.t!=="pau")continue;
+    var start=/^\d{2}:\d{2}$/.test(p.h0||"")?t2m(p.h0):-1;
+    var end=/^\d{2}:\d{2}$/.test(p.h1||"")?t2m(p.h1):-1;
+    var minutes=Number(p.min);
+    if(!Number.isFinite(minutes)||minutes<=0)minutes=-1;
+    if(minutes<0&&start>=0&&end>=0)minutes=(end-start+1440)%1440;
+    if(end<0&&start>=0&&minutes>0){
+      var endOfPause=(start+minutes)%1440;
+      end=pad(Math.floor(endOfPause/60))+":"+pad(endOfPause%60);
+    }else end=end>=0?p.h1:"—";
+    return {start:start>=0?p.h0:"—",duration:minutes>0?minutes+" min":"—",end:end};
+  }
+  return null;
+}
+
 function renderDet(key){
   if(!key){
     document.getElementById("det-title").textContent="Suchen";
@@ -7050,11 +7161,13 @@ function renderDet(key){
   var nav="";
   if(s.pr&&s.pr!=="—")nav+='<button onclick="curDet=\''+s.pr+'\';navDet(\''+s.pr+'\')" style="flex:1;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:9px;color:var(--muted);font-size:12px;cursor:pointer;font-family:inherit;">&#8592; '+s.pr+'</button>';
   if(s.nx&&s.nx!=="—")nav+='<button onclick="curDet=\''+s.nx+'\';navDet(\''+s.nx+'\')" style="flex:1;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:9px;color:var(--muted);font-size:12px;cursor:pointer;font-family:inherit;">'+s.nx+' &#8594;</button>';
+  var pauseSummary=firstPauseSummary(s.parts);
   var html='<div class="ani"><div class="card-hi">';
+  if(pauseSummary)html+='<div style="font-size:10px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Erste Pause</div>';
   html+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;">';
-  html+='<div style="background:rgba(0,255,136,0.05);border:1px solid rgba(0,255,136,0.15);border-radius:11px;padding:11px;text-align:center;"><div style="font-size:9px;color:var(--green);text-transform:uppercase;margin-bottom:3px;">Beginn</div><div style="font-size:22px;font-weight:900;color:var(--green);">'+(s.deb||"—")+'</div></div>';
-  html+='<div style="background:rgba(124,58,237,0.05);border:1px solid rgba(124,58,237,0.15);border-radius:11px;padding:11px;text-align:center;"><div style="font-size:9px;color:#a78bfa;text-transform:uppercase;margin-bottom:3px;">Dauer</div><div style="font-size:22px;font-weight:900;color:#a78bfa;">'+(s.dur||"—")+'</div></div>';
-  html+='<div style="background:rgba(255,68,102,0.05);border:1px solid rgba(255,68,102,0.15);border-radius:11px;padding:11px;text-align:center;"><div style="font-size:9px;color:var(--red);text-transform:uppercase;margin-bottom:3px;">Ende</div><div style="font-size:22px;font-weight:900;color:var(--red);">'+(s.fin||"—")+'</div></div>';
+  html+='<div style="background:rgba(0,255,136,0.05);border:1px solid rgba(0,255,136,0.15);border-radius:11px;padding:11px;text-align:center;"><div style="font-size:9px;color:var(--green);text-transform:uppercase;margin-bottom:3px;">Beginn</div><div style="font-size:22px;font-weight:900;color:var(--green);">'+(pauseSummary?pauseSummary.start:(s.deb||"—"))+'</div></div>';
+  html+='<div style="background:rgba(124,58,237,0.05);border:1px solid rgba(124,58,237,0.15);border-radius:11px;padding:11px;text-align:center;"><div style="font-size:9px;color:#a78bfa;text-transform:uppercase;margin-bottom:3px;">Dauer</div><div style="font-size:22px;font-weight:900;color:#a78bfa;">'+(pauseSummary?pauseSummary.duration:(s.dur||"—"))+'</div></div>';
+  html+='<div style="background:rgba(255,68,102,0.05);border:1px solid rgba(255,68,102,0.15);border-radius:11px;padding:11px;text-align:center;"><div style="font-size:9px;color:var(--red);text-transform:uppercase;margin-bottom:3px;">Ende</div><div style="font-size:22px;font-weight:900;color:var(--red);">'+(pauseSummary?pauseSummary.end:(s.fin||"—"))+'</div></div>';
   html+='</div>';
   html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">';
   html+='<div style="background:rgba(255,255,255,0.03);border-radius:10px;padding:10px;"><div style="font-size:10px;color:var(--muted);margin-bottom:3px;">Abfahrt</div><div style="font-size:13px;font-weight:700;">'+s.bs+'</div></div>';
@@ -10226,5 +10339,19 @@ function jpInit(){
 </div>
 
 <script src="astra-design.js"></script>
+<script>
+(function(){
+  var cards=document.querySelector("#s-dash .astra-secondary");
+  var original=cards&&cards.querySelector(".astra-break");
+  var live=document.getElementById("dash-break-card");
+  if(!cards||!original||!live)return;
+  original.style.display="none";
+  original.setAttribute("aria-hidden","true");
+  cards.style.gridTemplateColumns="minmax(0,1fr)";
+  cards.insertBefore(live,original);
+  live.style.marginBottom="0";
+  updateBreakCard(new Date());
+})();
+</script>
 </body>
 </html>
