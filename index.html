@@ -7172,13 +7172,16 @@ function renderDet(key){
   var pauseSummary=firstPauseSummary(s.parts);
   var dutyTime=getDutyTimes(s,null);
   var html='<div class="ani"><div class="card-hi">';
-  if(dutyTime.start&&dutyTime.end)html+='<div style="font-size:12px;color:var(--text2);margin-bottom:12px;">Dienstzeit <strong style="color:var(--text);">'+dutyTime.start+' → '+dutyTime.end+'</strong>'+(dutyTime.duration?' · '+dutyTime.duration+' h':'')+'</div>';
-  if(pauseSummary)html+='<div style="font-size:10px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Erste Pause</div>';
-  html+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;">';
-  html+='<div style="background:rgba(0,255,136,0.05);border:1px solid rgba(0,255,136,0.15);border-radius:11px;padding:11px;text-align:center;"><div style="font-size:9px;color:var(--green);text-transform:uppercase;margin-bottom:3px;">Beginn</div><div style="font-size:22px;font-weight:900;color:var(--green);">'+(pauseSummary?pauseSummary.start:(s.deb||"—"))+'</div></div>';
-  html+='<div style="background:rgba(124,58,237,0.05);border:1px solid rgba(124,58,237,0.15);border-radius:11px;padding:11px;text-align:center;"><div style="font-size:9px;color:#a78bfa;text-transform:uppercase;margin-bottom:3px;">Dauer</div><div style="font-size:22px;font-weight:900;color:#a78bfa;">'+(pauseSummary?pauseSummary.duration:(s.dur||"—"))+'</div></div>';
-  html+='<div style="background:rgba(255,68,102,0.05);border:1px solid rgba(255,68,102,0.15);border-radius:11px;padding:11px;text-align:center;"><div style="font-size:9px;color:var(--red);text-transform:uppercase;margin-bottom:3px;">Ende</div><div style="font-size:22px;font-weight:900;color:var(--red);">'+(pauseSummary?pauseSummary.end:(s.fin||"—"))+'</div></div>';
-  html+='</div>';
+  if(pauseSummary){
+    html+='<section class="det-pause" aria-label="Erste Pause"><h2 class="det-section-title">Erste Pause</h2><dl class="det-metrics">';
+    html+='<div><dt>Beginn</dt><dd>'+pauseSummary.start+'</dd></div>';
+    html+='<div><dt>Dauer</dt><dd>'+pauseSummary.duration+'</dd></div>';
+    html+='<div><dt>Ende</dt><dd>'+pauseSummary.end+'</dd></div></dl></section>';
+  }
+  html+='<section class="det-duty" aria-label="Dienstzeiten"><h2 class="det-section-title">Dienstzeiten <span>'+ (dutyTime.start||'—')+' → '+(dutyTime.end||'—')+'</span></h2><dl class="det-metrics">';
+  html+='<div><dt>Dienstbeginn</dt><dd>'+(dutyTime.start||'—')+'</dd></div>';
+  html+='<div><dt>Dienstende</dt><dd>'+(dutyTime.end||'—')+'</dd></div>';
+  html+='<div><dt>Dienstdauer</dt><dd>'+(dutyTime.duration||'—')+'</dd></div></dl></section>';
   html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">';
   html+='<div style="background:rgba(255,255,255,0.03);border-radius:10px;padding:10px;"><div style="font-size:10px;color:var(--muted);margin-bottom:3px;">Abfahrt</div><div style="font-size:13px;font-weight:700;">'+s.bs+'</div></div>';
   html+='<div style="background:rgba(255,255,255,0.03);border-radius:10px;padding:10px;"><div style="font-size:10px;color:var(--muted);margin-bottom:3px;">Ankunft</div><div style="font-size:13px;font-weight:700;">'+s.be+'</div></div>';
@@ -7194,15 +7197,16 @@ function renderDet(key){
     if(isEst)html+='<div style="background:rgba(245,166,35,0.06);border:1px solid rgba(245,166,35,0.15);border-radius:10px;padding:9px 12px;margin-bottom:10px;font-size:11px;color:var(--amber);">Pausenzeiten sind geschaetzt. Genaue Zeiten im PDF.</div>';
     html+='<div>';
     for(var i=0;i<detParts.length;i++){
-      var p=detParts[i],isLast=i===detParts.length-1;
+      var p=detParts[i];
       if(p.t==="pau"){
-        html+='<div class="tl-row"><div class="tl-time">'+p.h0+'</div><div class="tl-dot tl-pau">☕</div><div class="tl-content"><div class="tl-title">Unbezahlte Pause</div><div class="tl-sub">'+(p.min||'—')+' min'+(p.loc?' · '+p.loc:'')+'</div></div></div>';
+        html+='<div class="tl-row"><div class="tl-time">'+p.h0+'</div><div class="tl-dot tl-pau">☕</div><div class="tl-content"><div class="tl-title">Unbezahlte Pause – '+firstPauseSummary([p]).duration+'</div><div class="tl-sub">'+(p.loc||'')+'</div></div></div>';
       } else if(p.t==="svc"){
         html+='<div class="tl-row"><div class="tl-time">'+p.h0+'</div><div class="tl-dot tl-svc">🚌</div><div class="tl-content"><div class="tl-title">Linie <span style="color:var(--teal);">'+p.lg+'</span></div><div class="tl-sub">'+(p.loc||'')+(p.ul?' · Umlauf '+p.ul:'')+'</div></div></div>';
       } else if(p.t==="dep"){
-        html+='<div class="tl-row"><div class="tl-time">'+p.h0+'</div><div class="tl-dot '+(i===0?'tl-dep-start':'tl-dep-end')+'">'+(i===0?'🟢':'🔴')+'</div><div class="tl-content"><div class="tl-title">'+(i===0?'Dienstbeginn':'Dienstende')+'</div><div class="tl-sub">'+(p.info||'Betriebshof')+'</div></div></div>';
+        html+='<div class="tl-row"><div class="tl-time">'+p.h0+'</div><div class="tl-dot '+(i===0?'tl-dep-start':'tl-dep-end')+'">'+(i===0?'🟢':'🔴')+'</div><div class="tl-content"><div class="tl-title">'+(i===0?'Dienstbeginn':'Abschluss / Abrechnung')+'</div><div class="tl-sub">'+(p.info||'Betriebshof')+'</div></div></div>';
       }
     }
+    if(dutyTime.end)html+='<div class="tl-row det-end"><div class="tl-time">'+dutyTime.end+'</div><div class="tl-dot tl-dep-end">●</div><div class="tl-content"><div class="tl-title">Dienstende</div></div></div>';
     html+='</div>';
   }
   html+='</div>';

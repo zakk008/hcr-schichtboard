@@ -123,3 +123,22 @@ body.light .astra-duty-footer{border-color:#dfe4df}body.light .nav{background:#f
 body.light #s-plan .day-row,body.light #det-body .card-hi,body.light #det-body .tl-box{background:#fff;border-color:#c8d0ca}
 body.light #s-plan .day-row.today{background:#fff2cb;border-color:#a17a10}
 @media(min-width:700px){#s-plan .scroll,#s-det .scroll{padding:24px max(24px,calc((100% - 720px)/2)) 0}.astra-plan-footer{height:190px}}
+
+/* Dienst details: separate first break and full duty bounds, including narrow phones. */
+#s-det .scroll{min-height:0;padding-bottom:calc(24px + env(safe-area-inset-bottom))}
+#det-body .card-hi{min-width:0;padding:16px}
+.det-section-title{font-size:11px;text-transform:uppercase;letter-spacing:.7px;margin:0 0 10px;color:var(--text2)}
+.det-pause .det-section-title{color:var(--orange)}
+.det-duty{border-top:1px solid var(--border2);padding-top:16px;margin-top:16px}
+.det-duty:first-child{border-top:0;padding-top:0;margin-top:0}
+.det-section-title span{display:block;margin-top:7px;font-size:20px;letter-spacing:0;color:var(--text);font-variant-numeric:tabular-nums}
+.det-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:0 0 16px}
+.det-metrics>div{min-width:0;padding:10px 4px;border:1px solid var(--border2);border-radius:10px;text-align:center;background:rgba(128,128,128,.05)}
+.det-metrics dt{font-size:9px;text-transform:uppercase;color:var(--text2);margin-bottom:6px}
+.det-metrics dd{margin:0;font-size:20px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums;white-space:nowrap}
+#det-body .tl-content{min-width:0;overflow-wrap:anywhere}
+#det-body .tl-time{width:44px}
+#det-body .det-end{margin-top:8px;border-top:1px solid var(--border2);border-bottom:0}
+#det-body .det-end .tl-time,#det-body .det-end .tl-title{color:var(--accent);font-weight:800}
+#det-body .det-end .tl-title{text-transform:uppercase}
+@media(max-width:360px){#det-body .card-hi{padding:12px}.det-metrics dt{font-size:8px}.det-metrics dd{font-size:18px}#det-body .tl-row{gap:9px}}
