@@ -54,7 +54,8 @@
   }
   function duty(entry,now){
     var svc=getSvc(entry.s),date=entryDate(entry,now);
-    var startText=entry.h0||(svc&&svc.deb),endText=entry.h1||(svc&&svc.fin);
+    var bounds=getDutyTimes(svc,entry);
+    var startText=bounds.start,endText=bounds.end;
     var start=clockDate(date,startText),end=clockDate(date,endText);
     if(start&&end&&end<=start)end.setDate(end.getDate()+1);
     return {entry:entry,svc:svc,date:date,start:start,end:end,startText:startText,endText:endText};

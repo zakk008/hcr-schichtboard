@@ -6585,6 +6585,34 @@ function pad(n){return String(n).padStart(2,"0");}
 function todayStr(){var n=new Date();return pad(n.getDate())+"."+pad(n.getMonth()+1);}
 var normalize=function(s){return s.trim().replace(/\+/g,"").toUpperCase();};
 function getSvc(k){if(!k)return null;var n=normalize(k);return DB[n]||DB[n+"+"]||DB[k.toUpperCase()]||DB[k]||null;}
+function validDutyClock(value){
+  if(!/^\d{1,2}:\d{2}$/.test(value||""))return false;
+  var bits=value.split(":");
+  return +bits[0]<24&&+bits[1]<60;
+}
+function dutyMinutesFromStart(time,start){
+  var minutes=t2m(time)-t2m(start);
+  return minutes<0?minutes+1440:minutes;
+}
+function getDutyTimes(s,entry){
+  var parts=s&&Array.isArray(s.parts)?s.parts:[],firstPart="",lastTrip="",hasPause=false;
+  for(var i=0;i<parts.length;i++){
+    var part=parts[i];
+    if(!firstPart&&(part.t==="dep"||part.t==="svc")&&validDutyClock(part.h0))firstPart=part.h0;
+    if(part.t==="svc"&&validDutyClock(part.h1))lastTrip=part.h1;
+    if(part.t==="pau")hasPause=true;
+  }
+  var start=s&&validDutyClock(s.deb)?s.deb:firstPart||(entry&&validDutyClock(entry.h0)?entry.h0:"");
+  var end=s&&validDutyClock(s.fin)?s.fin:"";
+  if(lastTrip&&(!end||(start&&dutyMinutesFromStart(lastTrip,start)>dutyMinutesFromStart(end,start))))end=lastTrip;
+  if(!end&&!hasPause&&entry&&validDutyClock(entry.h1))end=entry.h1;
+  var duration="";
+  if(start&&end){
+    var minutes=dutyMinutesFromStart(end,start);
+    duration=pad(Math.floor(minutes/60))+":"+pad(minutes%60);
+  }else if(s&&/^\d{1,2}:\d{2}$/.test(s.dur||""))duration=s.dur;
+  return {start:start,end:end,duration:duration};
+}
 
 // ════════ NAVIGATION ════════
 function go(id){
@@ -6635,7 +6663,7 @@ function updateBreakCard(now){
     var parts=svc&&Array.isArray(svc.parts)?svc.parts:null;
     if(!parts)continue;
     hasParts=true;
-    var dayStart=dates[d].getTime(),serviceStart=t2m(svc.deb||entry.h0);
+    var dayStart=dates[d].getTime(),serviceStart=t2m(getDutyTimes(svc,entry).start);
     for(var j=0;j<parts.length;j++){
       var p=parts[j];
       if(p.t!=="pau")continue;
@@ -6723,22 +6751,8 @@ function refreshDash(){
 
   curDet=entry.s;
   var s=getSvc(entry.s);
-  var deb=s?s.deb:entry.h0, fin=s?s.fin:entry.h1;
-  if(s&&(!deb||!fin)&&s.parts&&s.parts.length>0){
-    var fp2=s.parts.filter(function(p){return p.t!=="pau";});
-    if(!deb&&fp2.length>0)deb=fp2[0].h0;
-    if(!fin&&fp2.length>0)fin=fp2[fp2.length-1].h1;
-  }
-  var dur=s?s.dur:"";
-  if(!dur&&deb&&fin){
-    var durMinCalc=t2m(fin)-t2m(deb);
-    if(durMinCalc<0)durMinCalc+=24*60;
-    var pauseMinCalc=0;
-    var rp=s?(s.parts||[]):[];
-    rp.forEach(function(p){if(p.t==="pau")pauseMinCalc+=(p.min||0);});
-    durMinCalc-=pauseMinCalc;
-    dur=pad(Math.floor(durMinCalc/60))+":"+pad(durMinCalc%60);
-  }
+  var dutyTime=getDutyTimes(s,entry);
+  var deb=dutyTime.start,fin=dutyTime.end,dur=dutyTime.duration;
 
   // Ligne de service
   var lgs=s&&s.lg?s.lg.split("·"):[];
@@ -6830,8 +6844,8 @@ function renderOverview(){
     var entry=planMap[day.d]||{j:day.j,d:day.d,s:"",h0:"",h1:""};
     var isToday=day.d===td;
     var frei=!entry.s||entry.s==="F"||entry.s==="KRANK"||entry.s==="Urlaub"||entry.s==="AZK";
-    var sv=getSvc(entry.s);
-    var deb=sv?sv.deb:entry.h0, fin=sv?sv.fin:entry.h1, dur=sv?sv.dur:"";
+    var sv=getSvc(entry.s),times=getDutyTimes(sv,entry);
+    var deb=times.start,fin=times.end,dur=times.duration;
     if(!frei&&dur){var p=dur.split(":");totalMin+=(parseInt(p[0])||0)*60+(parseInt(p[1])||0);}
 
     var rowBg=isToday?'background:rgba(245,166,35,0.08);border-color:rgba(245,166,35,0.25);':'';
@@ -6915,13 +6929,8 @@ function updateTimer(){
   if(_lastAlarm._day!==td){_lastAlarm={_day:td};}
   var s=getSvc(entry.s);
   var ns=nowS();
-  // Fallback deb/fin depuis parts si manquant dans DB
-  var debStr=s?s.deb:entry.h0, finStr=s?s.fin:entry.h1;
-  if(s&&(!debStr||!finStr)&&s.parts&&s.parts.length>0){
-    var fp=s.parts.filter(function(p){return p.t!=="pau";});
-    if(!debStr&&fp.length>0)debStr=fp[0].h0;
-    if(!finStr&&fp.length>0)finStr=fp[fp.length-1].h1;
-  }
+  var dutyTime=getDutyTimes(s,entry);
+  var debStr=dutyTime.start,finStr=dutyTime.end;
   var deb=t2s(debStr), fin=t2s(finStr);
   if(deb>0&&fin>0){
     var pct=Math.max(0,Math.min(100,((ns-deb)/(fin-deb))*100));
@@ -6951,15 +6960,13 @@ function updateTimer(){
           var dp3=document.getElementById("dash-prog-bar");if(dp3)dp3.style.background="linear-gradient(90deg,var(--accent2),var(--accent))";
           setEl("td-phase","DIENST");setEl("dash-prog-phase","Im Dienst");
           var nx=sParts[i+1];
-          if(nx){
+          if(nx&&nx.t==="pau"){
             var nr=t2s(nx.h0)-ns;
-            if(nx.t==="pau"){
-              setEl("td-clbl","Pause in");setEl("td-cd",s2hms(nr));setStyle("td-cd","color","var(--orange)");
-              setEl("td-cdesc","Pause "+nx.h0+"–"+nx.h1+" ("+nx.min+" Min) – "+nx.loc);
-            } else {
-              setEl("td-clbl","Dienstende in");setEl("td-cd",s2hms(nr));setStyle("td-cd","color","var(--green)");
-              setEl("td-cdesc","Ende um "+nx.h1);
-            }
+            setEl("td-clbl","Pause in");setEl("td-cd",s2hms(nr));setStyle("td-cd","color","var(--orange)");
+            setEl("td-cdesc","Pause "+nx.h0+"–"+nx.h1+" ("+nx.min+" Min) – "+nx.loc);
+          }else if(fin>=ns){
+            setEl("td-clbl","Dienstende in");setEl("td-cd",s2hms(fin-ns));setStyle("td-cd","color","var(--green)");
+            setEl("td-cdesc","Ende um "+finStr);
           }
         } else if(p.t==="dep"){
           setBadge("pre","VORBEREITUNG");
@@ -7007,7 +7014,8 @@ function renderNextSvc(td,all){
   if(nxt){
     card.style.display="block";
     var ns=getSvc(nxt.s);
-    cont.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;"><div><div style="font-size:11px;color:var(--muted);">'+nxt.j+' '+nxt.d+'</div><div style="font-size:22px;font-weight:900;color:var(--amber);">'+nxt.s+'</div><div style="font-size:12px;color:var(--muted);margin-top:2px;">'+(ns?ns.deb:nxt.h0||"—")+' – '+(ns?ns.fin:nxt.h1||"—")+(ns?' · '+ns.dur+'h':'')+'</div></div><button onclick="curDet=\''+nxt.s+'\';go(\'det\')" style="background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.3);border-radius:10px;padding:8px 13px;color:var(--amber);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">Details</button></div>';
+    var nt=getDutyTimes(ns,nxt);
+    cont.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;"><div><div style="font-size:11px;color:var(--muted);">'+nxt.j+' '+nxt.d+'</div><div style="font-size:22px;font-weight:900;color:var(--amber);">'+nxt.s+'</div><div style="font-size:12px;color:var(--muted);margin-top:2px;">'+(nt.start||"—")+' – '+(nt.end||"—")+(nt.duration?' · '+nt.duration+'h':'')+'</div></div><button onclick="curDet=\''+nxt.s+'\';go(\'det\')" style="background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.3);border-radius:10px;padding:8px 13px;color:var(--amber);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">Details</button></div>';
   } else {
     card.style.display="none";
   }
@@ -7032,8 +7040,8 @@ function renderPlan(){
   days.forEach(function(d){
     var frei=!d.s||d.s==="F"||d.s==="KRANK"||d.s==="Urlaub"||d.s==="AZK";
     var isToday=d.d===td;
-    var sv=getSvc(d.s);
-    var deb=sv?sv.deb:d.h0, fin=sv?sv.fin:d.h1, dur=sv?sv.dur:"";
+    var sv=getSvc(d.s),times=getDutyTimes(sv,d);
+    var deb=times.start,fin=times.end,dur=times.duration;
     if(!frei&&dur){var p=dur.split(":");totalMin+=(parseInt(p[0])||0)*60+(parseInt(p[1])||0);}
     var color=dc[d.j]||"var(--muted)";
     var badge="";
@@ -7162,7 +7170,9 @@ function renderDet(key){
   if(s.pr&&s.pr!=="—")nav+='<button onclick="curDet=\''+s.pr+'\';navDet(\''+s.pr+'\')" style="flex:1;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:9px;color:var(--muted);font-size:12px;cursor:pointer;font-family:inherit;">&#8592; '+s.pr+'</button>';
   if(s.nx&&s.nx!=="—")nav+='<button onclick="curDet=\''+s.nx+'\';navDet(\''+s.nx+'\')" style="flex:1;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:9px;color:var(--muted);font-size:12px;cursor:pointer;font-family:inherit;">'+s.nx+' &#8594;</button>';
   var pauseSummary=firstPauseSummary(s.parts);
+  var dutyTime=getDutyTimes(s,null);
   var html='<div class="ani"><div class="card-hi">';
+  if(dutyTime.start&&dutyTime.end)html+='<div style="font-size:12px;color:var(--text2);margin-bottom:12px;">Dienstzeit <strong style="color:var(--text);">'+dutyTime.start+' → '+dutyTime.end+'</strong>'+(dutyTime.duration?' · '+dutyTime.duration+' h':'')+'</div>';
   if(pauseSummary)html+='<div style="font-size:10px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Erste Pause</div>';
   html+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;">';
   html+='<div style="background:rgba(0,255,136,0.05);border:1px solid rgba(0,255,136,0.15);border-radius:11px;padding:11px;text-align:center;"><div style="font-size:9px;color:var(--green);text-transform:uppercase;margin-bottom:3px;">Beginn</div><div style="font-size:22px;font-weight:900;color:var(--green);">'+(pauseSummary?pauseSummary.start:(s.deb||"—"))+'</div></div>';
